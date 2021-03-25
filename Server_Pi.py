@@ -56,7 +56,7 @@ while True:
    data, addr = sock.recvfrom(1024)
    print(data)
    if data :
-        
+      #lol
       print("received message:", data)
       while True:
          text = final_track[i]
