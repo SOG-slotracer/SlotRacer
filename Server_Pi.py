@@ -1,6 +1,7 @@
 import socket
 import datetime
 import time
+import threading
 
 
 UDP_IP = ' 127.0.0.1'
@@ -45,33 +46,83 @@ outer_to_inner_track = ["459.332703,179.166351", "496.332703,186.166351", "531.3
 final_track = inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 + inner_to_outer_track + \
               outer_track_p3 + outer_track_p1 + outer_to_inner_track + inner_track_p3
 
-sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-#ry:
-ip_port = ('127.0.0.1',4242)
-sock.bind(ip_port)
-print("Binding is complete")
-print("waiting for client") 
-i = 0
-data, addr = sock.recvfrom(1024)
-while True:
-    print(data)
-    text = final_track[i]
-    try:
-        sock.settimeout(0.0001)
-        data2, addr2 = sock.recvfrom(1024)
-        print(data2)
-        sock.sendto(text.encode('utf-8'), addr)
-        time.sleep(0.05)
-        i += 1
-        if i == len(final_track):
-            i = 0
-        continue
-    except socket.timeout:
-        time.sleep(0.1)
-        print(text)
-        sock.sendto(text.encode('utf-8'), addr)
-        i += 1
-        if i == len(final_track):
-            i = 0
-        print("gothere")
-        continue
+final_track2 = outer_track_p1 + outer_to_inner_track + inner_track_p3 + inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 + inner_to_outer_track + \
+              outer_track_p3
+
+def port_watcher(port):
+
+    UDP_IP = "127.0.0.1"
+    UDP_PORT = port
+
+    print("Binding port: %s" % port)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.bind((UDP_IP, UDP_PORT))
+    print("Binding is complete")
+    print("waiting for client")
+    i=0
+    data, addr = sock.recvfrom(1024)
+    print("received message:", data)
+    while True:
+        text = final_track[i]
+        try:
+            sock.settimeout(0.0001)
+            data2, addr2 = sock.recvfrom(1024)
+            print(data2)
+            sock.sendto(text.encode('utf-8'), addr)
+            time.sleep(0.05)
+            i += 1
+            if i == len(final_track):
+                i = 0
+            continue
+        except socket.timeout:
+            time.sleep(0.1)
+            print(text)
+            sock.sendto(text.encode('utf-8'), addr)
+            i += 1
+            if i == len(final_track):
+                i = 0
+            print("gothere")
+            continue
+
+def port_watcher2(port):
+
+    UDP_IP = "127.0.0.1"
+    UDP_PORT = 2500
+
+    print("Binding port: %s" % port)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.bind((UDP_IP, UDP_PORT))
+    print("Binding is complete")
+    print("waiting for client")
+    i=0
+    data, addr = sock.recvfrom(1024)
+    print("received message:", data)
+    while True:
+        text = final_track2[i]
+        try:
+            sock.settimeout(0.0001)
+            data2, addr2 = sock.recvfrom(1024)
+            print(data2)
+            sock.sendto(text.encode('utf-8'), addr)
+            time.sleep(0.05)
+            i += 1
+            if i == len(final_track2):
+                i = 0
+            continue
+        except socket.timeout:
+            time.sleep(0.1)
+            print(text)
+            sock.sendto(text.encode('utf-8'), addr)
+            i += 1
+            if i == len(final_track2):
+                i = 0
+            print("gothere")
+            continue
+
+x = threading.Thread(target=port_watcher, args=(4242,))
+x2 = threading.Thread(target=port_watcher2, args=(2500,))
+
+x.start()
+x2.start()
+
+
