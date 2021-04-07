@@ -2,7 +2,9 @@ import socket
 import datetime
 import time
 import threading
-
+import numpy as np
+import matplotlib.pyplot as plt
+import math
 
 UDP_IP = ' 127.0.0.1'
 #UDP_PORT = 4242
@@ -46,8 +48,8 @@ outer_to_inner_track = ["459.332703,179.166351", "496.332703,186.166351", "531.3
 final_track = inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 + inner_to_outer_track + \
               outer_track_p3 + outer_track_p1 + outer_to_inner_track + inner_track_p3
 
-final_track2 = outer_track_p1 + outer_to_inner_track + inner_track_p3 + inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 + inner_to_outer_track + \
-              outer_track_p3
+final_track2 = outer_track_p1 + outer_to_inner_track + inner_track_p3 + inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 \
+               + inner_to_outer_track + outer_track_p3
 
 def port_watcher(port):
 
@@ -68,6 +70,9 @@ def port_watcher(port):
             sock.settimeout(0.0001)
             data2, addr2 = sock.recvfrom(1024)
             print(data2)
+            #if b'space' in data2:
+                #space is found over the first port watcher
+                #increase speed
             sock.sendto(text.encode('utf-8'), addr)
             time.sleep(0.05)
             i += 1
@@ -87,7 +92,7 @@ def port_watcher(port):
 def port_watcher2(port):
 
     UDP_IP = "127.0.0.1"
-    UDP_PORT = 2500
+    UDP_PORT = port
 
     print("Binding port: %s" % port)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -102,7 +107,9 @@ def port_watcher2(port):
         try:
             sock.settimeout(0.0001)
             data2, addr2 = sock.recvfrom(1024)
-            print(data2)
+            #print(data2)
+            print("data2: %s" % data2)
+            print("addr2: %s" % text)
             sock.sendto(text.encode('utf-8'), addr)
             time.sleep(0.05)
             i += 1
@@ -111,12 +118,13 @@ def port_watcher2(port):
             continue
         except socket.timeout:
             time.sleep(0.1)
-            print(text)
+            #print(text)
+            print("text2: %s" % text)
             sock.sendto(text.encode('utf-8'), addr)
             i += 1
             if i == len(final_track2):
                 i = 0
-            print("gothere")
+            print("gothere2")
             continue
 
 x = threading.Thread(target=port_watcher, args=(4242,))
@@ -124,5 +132,49 @@ x2 = threading.Thread(target=port_watcher2, args=(2500,))
 
 x.start()
 x2.start()
+
+def convert_coordinates(track_part):
+    x = [float(item.split(",")[0]) for item in track_part]
+    y = [float(item.split(",")[1]) for item in track_part]
+    return x, y
+
+def calc_radius(x1,x2,x3,y1,y2,y3):
+    p1 = np.array([x1,y1])
+    p2 = np.array([x2,y2])
+    p3 = np.array([x3,y3])
+    w = math.hypot(x1 - x3, y1 - y3)
+    h = np.cross(p3 - p1, p1 - p2) / np.linalg.norm(p3 - p1)
+    if h!= 0:
+        radius = pow(w,2)/(8*h) + (h/2)
+    else:
+        #If a line is completely flat, set curvature extremely high manually. avoid division by 0
+        radius = 99999
+    return radius
+
+
+print(convert_coordinates(final_track2)[0])
+print(convert_coordinates(final_track2)[1])
+
+track_parts = [inner_track_p1, inner_track_p2, inner_track_p3, outer_track_p1, outer_track_p2, outer_track_p3, inner_to_outer_track, outer_to_inner_track]
+
+velocity = 1
+mass = 1000
+
+colors = np.arange(len(final_track2))
+plt.scatter(convert_coordinates(final_track2)[0], convert_coordinates(final_track2)[1], c=colors)
+for i, number in enumerate(colors):
+    x = convert_coordinates(final_track2)[0]
+    y = convert_coordinates(final_track2)[1]
+    fulltext = "Number: {}".format(number)
+
+    radius = calc_radius(x[i], x[i-1], x[i-2], y[i], y[i-1], y[i-2])
+    centripetal_force = mass * velocity * velocity / radius
+    #fulltext = "Number: {}\nX: {}\nY: {}\nR: {}".format(number, round(x[i]), round(y[i]), round(radius, 3))
+    fulltext = "Number: {}\nForce: {}".format(number, round(centripetal_force,3))
+    plt.annotate(fulltext, (convert_coordinates(final_track2)[0][i], convert_coordinates(final_track2)[1][i]), fontsize=7)
+
+
+plt.show()
+
 
 

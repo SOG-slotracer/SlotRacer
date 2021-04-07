@@ -106,7 +106,7 @@ func move_along_path(distance): #Distance is pixels required to be traversed in 
 		#socket.put_packet("lol".to_ascii())
 		if Input.is_key_pressed(KEY_SPACE):	
 			print("space")
-			socket2.put_packet("1".to_ascii())
+			socket.put_packet("space".to_ascii())
 	# The character reached the end of the path.
 	$Car2.position = last_point
 	set_process(false)
@@ -126,10 +126,10 @@ func _update_navigation_path(start_position, end_position):
 func _init():
 	socket = PacketPeerUDP.new()
 	socket.set_dest_address(server_ip, port)
-	socket.put_packet("What are you doing".to_ascii())
+	socket.put_packet("Started socket 1. Port 4242".to_ascii())
 	socket2 = PacketPeerUDP.new()
-	socket2.set_dest_address(server_ip, 2500)
-	socket2.put_packet("What are you doing part2".to_ascii())
+	socket2.set_dest_address(server_ip, port2)
+	socket2.put_packet("Started socket 2. Port 2500".to_ascii())
 	return
 
 
