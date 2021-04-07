@@ -9,6 +9,9 @@ pytest = "*"
 flake8 = "*"
 pycodestyle = "*"
 matplotlib = "*"
+opencv-python = "*"
+imutils = "*"
+carreralib = "*"
 
 [dev-packages]
 
