@@ -51,7 +51,11 @@ final_track = inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 
 final_track2 = outer_track_p1 + outer_to_inner_track + inner_track_p3 + inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 \
                + inner_to_outer_track + outer_track_p3
 
+velocity = 0
+mass = 1
+
 def port_watcher(port):
+    #listen to if space is pressed (throttled)
 
     UDP_IP = "127.0.0.1"
     UDP_PORT = port
@@ -61,32 +65,24 @@ def port_watcher(port):
     sock.bind((UDP_IP, UDP_PORT))
     print("Binding is complete")
     print("waiting for client")
-    i=0
     data, addr = sock.recvfrom(1024)
     print("received message:", data)
     while True:
-        text = final_track[i]
+        #text = final_track[i]
         try:
             sock.settimeout(0.0001)
             data2, addr2 = sock.recvfrom(1024)
-            print(data2)
-            #if b'space' in data2:
+            #print(data2)
+            if b'space' in data2:
                 #space is found over the first port watcher
                 #increase speed
-            sock.sendto(text.encode('utf-8'), addr)
-            time.sleep(0.05)
-            i += 1
-            if i == len(final_track):
-                i = 0
-            continue
+
+                #print("increase force!!")
+                calc_velocity(5)
+            #sock.sendto(text.encode('utf-8'), addr)
         except socket.timeout:
-            time.sleep(0.1)
-            print(text)
-            sock.sendto(text.encode('utf-8'), addr)
-            i += 1
-            if i == len(final_track):
-                i = 0
-            print("gothere")
+            time.sleep(0.01)
+            #sock.sendto(text.encode('utf-8'), addr)
             continue
 
 def port_watcher2(port):
@@ -107,31 +103,57 @@ def port_watcher2(port):
         try:
             sock.settimeout(0.0001)
             data2, addr2 = sock.recvfrom(1024)
-            #print(data2)
-            print("data2: %s" % data2)
-            print("addr2: %s" % text)
+            #print("data2: %s" % data2)
             sock.sendto(text.encode('utf-8'), addr)
-            time.sleep(0.05)
-            i += 1
-            if i == len(final_track2):
-                i = 0
+            time.sleep(0.1)
+
             continue
         except socket.timeout:
-            time.sleep(0.1)
-            #print(text)
-            print("text2: %s" % text)
+            # drive car. sleep amount is inversely dependant of velocity
+            calc_velocity(0)
+
+            #calculate centripetal force
+            x = convert_coordinates(final_track2)[0]
+            y = convert_coordinates(final_track2)[1]
+            radius = calc_radius(x[i], x[i - 1], x[i - 2], y[i], y[i - 1], y[i - 2])
+            centripetal_force = mass * velocity * velocity / radius
+            print("F: %s" % centripetal_force)
+
+            if velocity == 0:
+                time.sleep(0.1)
+                #print("stopped")
+            else:
+                #print("driving")
+                time.sleep(1 / velocity)
+                i += 1
+                if i == len(final_track2):
+                    i = 0
+
+            #print("text2: %s" % text)
             sock.sendto(text.encode('utf-8'), addr)
-            i += 1
-            if i == len(final_track2):
-                i = 0
-            print("gothere2")
+
             continue
+
 
 x = threading.Thread(target=port_watcher, args=(4242,))
 x2 = threading.Thread(target=port_watcher2, args=(2500,))
 
 x.start()
 x2.start()
+
+def calc_velocity(throttle_force):
+    global velocity
+
+    sliding_friction = mass * 9.8 * 0.1
+    air_friction = 0.005 * 0.5 * velocity * velocity
+    total_force = throttle_force - air_friction - sliding_friction
+    acceleration = total_force / mass
+
+    velocity = acceleration + velocity
+    if velocity < 2:
+        velocity = 0
+    #print("v: %s" % velocity)
+
 
 def convert_coordinates(track_part):
     x = [float(item.split(",")[0]) for item in track_part]
@@ -157,20 +179,16 @@ print(convert_coordinates(final_track2)[1])
 
 track_parts = [inner_track_p1, inner_track_p2, inner_track_p3, outer_track_p1, outer_track_p2, outer_track_p3, inner_to_outer_track, outer_to_inner_track]
 
-velocity = 1
-mass = 1000
-
 colors = np.arange(len(final_track2))
 plt.scatter(convert_coordinates(final_track2)[0], convert_coordinates(final_track2)[1], c=colors)
+x = convert_coordinates(final_track2)[0]
+y = convert_coordinates(final_track2)[1]
 for i, number in enumerate(colors):
-    x = convert_coordinates(final_track2)[0]
-    y = convert_coordinates(final_track2)[1]
+
     fulltext = "Number: {}".format(number)
 
-    radius = calc_radius(x[i], x[i-1], x[i-2], y[i], y[i-1], y[i-2])
-    centripetal_force = mass * velocity * velocity / radius
-    #fulltext = "Number: {}\nX: {}\nY: {}\nR: {}".format(number, round(x[i]), round(y[i]), round(radius, 3))
-    fulltext = "Number: {}\nForce: {}".format(number, round(centripetal_force,3))
+    known_radius = calc_radius(x[i], x[i-1], x[i-2], y[i], y[i-1], y[i-2])
+    fulltext = "Number: {}\nRadius: {}".format(number, known_radius)
     plt.annotate(fulltext, (convert_coordinates(final_track2)[0][i], convert_coordinates(final_track2)[1][i]), fontsize=7)
 
 
