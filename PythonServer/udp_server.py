@@ -1,5 +1,4 @@
 import socket
-import datetime
 import time
 
 inner_track_p1 = [
@@ -86,9 +85,10 @@ outer_to_inner_track = [
 
 UDP_IP = "127.0.0.1"
 UDP_PORT = 4242
-final_track = inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 + inner_to_outer_track + \
-              outer_track_p3 + outer_track_p1 + outer_to_inner_track + inner_track_p3
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
+final_track = inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 + \
+              inner_to_outer_track + outer_track_p3 + outer_track_p1 +  \
+              + outer_to_inner_track + inner_track_p3
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
 sock.bind((UDP_IP, UDP_PORT))
 i = 0
 while True:
@@ -103,4 +103,3 @@ while True:
             if i == len(final_track):
                 i = 0
             time.sleep(.2)
-
