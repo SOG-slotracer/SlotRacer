@@ -1,12 +1,11 @@
+import calculator as calculate
 import matplotlib.pyplot as plt
-import math
 import numpy as np
 import socket
 import time
 import threading
 
-UDP_IP = ' 127.0.0.1'
-# UDP_PORT = 4242
+velocity = 0
 
 inner_track_p1 = [
     "376.332703,327.166351", "327.332703,327.166351", "283.332703,322.166351",
@@ -64,150 +63,86 @@ final_track2 = outer_track_p1 + outer_to_inner_track + inner_track_p3 + \
     inner_track_p1 + inner_track_p2 + inner_track_p3 + \
     inner_track_p1 + inner_to_outer_track + outer_track_p3
 
-velocity = 0
-mass = 1
 
-
-def port_watcher(port):
-    # listen to if space is pressed (throttled)
-
-    UDP_IP = "127.0.0.1"
-    UDP_PORT = port
-
-    print("Binding port: %s" % port)
+def bind_port(udp_ip, udp_port):
+    print("Binding port: %s" % udp_port)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind((UDP_IP, UDP_PORT))
+    sock.bind((udp_ip, udp_port))
     print("Binding is complete")
     print("waiting for client")
     data, addr = sock.recvfrom(1024)
     print("received message:", data)
+    return sock, addr
+
+
+def godot_listener(udp_ip, udp_port):
+    global velocity
+    # listen to if space is pressed (throttled)
+    sock, addr = bind_port(udp_ip, udp_port)
     while True:
-        # text = final_track[i]
         try:
             sock.settimeout(0.0001)
             data2, addr2 = sock.recvfrom(1024)
-            # print(data2)
             if b'space' in data2:
-                # space is found over the first port watcher
-                # increase speed
-
-                # print("increase force!!")
-                calc_velocity(5)
-            # sock.sendto(text.encode('utf-8'), addr)
+                velocity = calculate.velocity(velocity, 5)
         except socket.timeout:
             time.sleep(0.01)
-            # sock.sendto(text.encode('utf-8'), addr)
             continue
 
 
-def port_watcher2(port):
-
-    UDP_IP = "127.0.0.1"
-    UDP_PORT = port
-
-    print("Binding port: %s" % port)
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind((UDP_IP, UDP_PORT))
-    print("Binding is complete")
-    print("waiting for client")
+def godot_sender(udp_ip, udp_port, x, y):
+    global velocity
+    sock, addr = bind_port(udp_ip, udp_port)
     i = 0
-    data, addr = sock.recvfrom(1024)
-    print("received message:", data)
     while True:
         text = final_track2[i]
         try:
             sock.settimeout(0.0001)
             data2, addr2 = sock.recvfrom(1024)
-            # print("data2: %s" % data2)
             sock.sendto(text.encode('utf-8'), addr)
             time.sleep(0.1)
-
             continue
         except socket.timeout:
             # drive car. sleep amount is inversely dependant of velocity
-            calc_velocity(0)
-
-            # calculate centripetal force
-            x = convert_coordinates(final_track2)[0]
-            y = convert_coordinates(final_track2)[1]
-            radius = calc_radius(x[i], x[i - 1], x[i - 2], y[i], y[i - 1], y[i - 2])
-            centripetal_force = mass * velocity * velocity / radius
+            velocity = calculate.velocity(velocity, 0)
+            radius = calculate.radius(x[i], x[i - 1], x[i - 2], y[i], y[i - 1], y[i - 2])
+            centripetal_force = calculate.centripetal_force(velocity, radius)
             print("F: %s" % centripetal_force)
 
             if velocity == 0:
                 time.sleep(0.1)
-                # print("stopped")
             else:
-                # print("driving")
                 time.sleep(1 / velocity)
-                i += 1
-                if i == len(final_track2):
-                    i = 0
-
-            # print("text2: %s" % text)
+                i = i + 1 if i != len(final_track2) - 1 else 0
             sock.sendto(text.encode('utf-8'), addr)
-
             continue
 
 
-x = threading.Thread(target=port_watcher, args=(4242,))
-x2 = threading.Thread(target=port_watcher2, args=(2500,))
-
-x.start()
-x2.start()
-
-
-def calc_velocity(throttle_force):
-    global velocity
-
-    sliding_friction = mass * 9.8 * 0.1
-    air_friction = 0.005 * 0.5 * velocity * velocity
-    total_force = throttle_force - air_friction - sliding_friction
-    acceleration = total_force / mass
-
-    velocity = acceleration + velocity
-    if velocity < 2:
-        velocity = 0
-    # print("v: %s" % velocity)
-
-
-def convert_coordinates(track_part):
+def extract_track_coordinates(track_part):
     x = [float(item.split(",")[0]) for item in track_part]
     y = [float(item.split(",")[1]) for item in track_part]
     return x, y
 
 
-def calc_radius(x1, x2, x3, y1, y2, y3):
-    p1 = np.array([x1, y1])
-    p2 = np.array([x2, y2])
-    p3 = np.array([x3, y3])
-    w = math.hypot(x1 - x3, y1 - y3)
-    h = np.cross(p3 - p1, p1 - p2) / np.linalg.norm(p3 - p1)
-    if h != 0:
-        radius = pow(w, 2)/(8*h) + (h/2)
-    else:
-        # If a line is completely flat, set curvature extremely high manually. avoid division by 0
-        radius = 99999
-    return radius
+def plot_track(x, y):
+    colors = np.arange(len(final_track2))
+    plt.scatter(x, y, c=colors)
+    for i, number in enumerate(colors):
+        fulltext = "Number: {}".format(number)
+        known_radius = calculate.radius(x[i], x[i-1], x[i-2], y[i], y[i-1], y[i-2])
+        fulltext = "Number: {}\nRadius: {}".format(number, known_radius)
+        plt.annotate(fulltext, (extract_track_coordinates(final_track2)[
+            0][i], extract_track_coordinates(final_track2)[1][i]), fontsize=7)
+    plt.show()
 
 
-print(convert_coordinates(final_track2)[0])
-print(convert_coordinates(final_track2)[1])
-
-track_parts = [inner_track_p1, inner_track_p2, inner_track_p3, outer_track_p1,
-               outer_track_p2, outer_track_p3, inner_to_outer_track, outer_to_inner_track]
-
-colors = np.arange(len(final_track2))
-plt.scatter(convert_coordinates(final_track2)[0], convert_coordinates(final_track2)[1], c=colors)
-x = convert_coordinates(final_track2)[0]
-y = convert_coordinates(final_track2)[1]
-for i, number in enumerate(colors):
-
-    fulltext = "Number: {}".format(number)
-
-    known_radius = calc_radius(x[i], x[i-1], x[i-2], y[i], y[i-1], y[i-2])
-    fulltext = "Number: {}\nRadius: {}".format(number, known_radius)
-    plt.annotate(fulltext, (convert_coordinates(final_track2)[
-                 0][i], convert_coordinates(final_track2)[1][i]), fontsize=7)
-
-plt.show()
+if __name__ == "__main__":
+    x_coords_track = extract_track_coordinates(final_track2)[0]
+    y_coords_track = extract_track_coordinates(final_track2)[1]
+    GODOT_IP = '127.0.0.1'
+    listener = threading.Thread(target=godot_listener, args=(GODOT_IP, 4242))
+    sender = threading.Thread(target=godot_sender, args=(
+        GODOT_IP, 2500, x_coords_track, y_coords_track))
+    listener.start()
+    sender.start()
+    plot_track(x_coords_track, y_coords_track)
