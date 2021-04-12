@@ -82,8 +82,9 @@ outer_to_inner_track = [
     "531.332703,197.166351,1,23,0:23,0:19,3/60", "568.332703,203.166351,1,23,0:23,0:19,3/60",
     "608.332703,215.166351,1,23,0:23,0:19,3/60"
 ]
-final_track = inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 + inner_to_outer_track + \
-              outer_track_p3 + outer_track_p1 + outer_to_inner_track + inner_track_p3
+final_track = inner_track_p1 + inner_track_p2 + inner_track_p3 + inner_track_p1 + \
+              inner_to_outer_track + outer_track_p3 + outer_track_p1 + \
+              outer_to_inner_track + inner_track_p3
 
 msg_from_client = "Hello UDP Server"
 bytes_to_send = str.encode(msg_from_client)

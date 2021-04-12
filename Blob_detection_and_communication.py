@@ -1,10 +1,8 @@
 # Standard imports
 import cv2
-import numpy as np
 import matplotlib.pyplot as plt
 import socket
 import time
-import datetime
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -21,7 +19,7 @@ video = cv2.VideoCapture(CAMERA_ID)
 ok, im = video.read()
 
 im = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
-## mask of yellow (15,0,0), (36, 255, 255)
+# mask of yellow (15,0,0), (36, 255, 255)
 mask1 = cv2.inRange(im, (20, 100, 100), (30, 255, 255))
 
 mask2 = cv2.inRange(im, (78, 158, 124), (110, 255, 255))
@@ -84,7 +82,7 @@ while time.time() < endtime:
     cv2.imshow("image", im)
 
     im = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
-    ## mask of yellow (15,0,0), (36, 255, 255)
+    # mask of yellow (15,0,0), (36, 255, 255)
     mask1 = cv2.inRange(im, (20, 100, 100), (30, 255, 255))
 
     mask2 = cv2.inRange(im, (78, 158, 124), (110, 255, 255))
@@ -104,15 +102,18 @@ while time.time() < endtime:
     # plt.scatter(im.nonzero()[0].mean(), im.nonzero()[1].mean())
     # plt.pause(0.001)
 
-    # i +=1
+    # i += 1
     # else:
-    # cv2.putText(im, "Tracking failure detected", (100,80), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2)
+    # cv2.putText(im, "Tracking failure detected",
+    #             (100, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 2)
 
     # Draw detected blobs as red circles.
     # cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS ensures
     # the size of the circle corresponds to the size of blob
 
-    # im_with_keypoints = cv2.drawKeypoints(im, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    # im_with_keypoints = cv2.drawKeypoints(im, keypoints, numpy.array([]),
+    #                                       (0, 0, 255),
+    #                                       cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
     # Show blobs
     # cv2.imshow("Keypoints", im_with_keypoints)
@@ -138,7 +139,8 @@ while time.time() < endtime:
 
     # Exit if ESC pressed
     k = cv2.waitKey(1) & 0xff
-    if k == 27: break
+    if k == 27:
+        break
 
 print("plot size = ", len(X))
 plt.scatter(X, Y)

@@ -12,6 +12,7 @@ matplotlib = "*"
 opencv-python = "*"
 imutils = "*"
 carreralib = "*"
+autopep8 = "*"
 
 [dev-packages]
 
