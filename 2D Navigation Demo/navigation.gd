@@ -2,8 +2,8 @@ extends Navigation2D
 
 export(float) var character_speed = 30000.0 #Pixels / second
 var path = []
-var socket
-var socket2
+var sender
+var listener
 var destination
 var position_array
 var x = 0
@@ -43,38 +43,32 @@ func _process(delta): #delta is FPS, which is automaticallly adjusted by the sys
 					  #depending on state of the computer at a given time
 	var walk_distance = character_speed * delta #this thus gives pixels/frame
 	move_along_path(walk_distance)
-	var data:String = (socket2.get_packet().get_string_from_ascii())
-
-	if data:
-		position_array = data.rsplit(",", true, 1)
-		x = position_array[0]
-		y = position_array[1]
-		position = Vector2(x, y)
-		_update_navigation_path($Car2.position, position) 
-		print("position: ")
-		print(position)
 
 func _exit_tree():
 	thread.wait_to_finish()
 
 func _thread_function(userdata):
-	print("A new thread for communication is created ", socket2)
+	print("A new thread for communication is created ", listener)
 	while true:
-		var data:String = (socket2.get_packet().get_string_from_ascii())
-		print(data)
+		var data:String = (listener.get_packet().get_string_from_ascii())
 		if data:
-			position_array = data.rsplit(",", true, 6)
-			x = position_array[0]
-			y = position_array[1]
-			if position_array.size() == 7:
-				$GridContainer/PositionCar1.text = position_array[2]
-				$GridContainer/SpeedCar1.text = position_array[3]
-				$GridContainer/LastLapCar1.text = position_array[4]
-				$GridContainer/BestLapCar1.text = position_array[5]
-				$GridContainer/ProgressCar1.text = position_array[6]
+			print(data)
+			if data == "derailed":
+				#If cart is derailed, game stops 
+				print("test")
+			else:
+				position_array = data.rsplit(",", true, 6)
+				x = position_array[0]
+				y = position_array[1]
+				if position_array.size() == 7:
+					$GridContainer/PositionCar1.text = position_array[2]
+					$GridContainer/SpeedCar1.text = position_array[3]
+					$GridContainer/LastLapCar1.text = position_array[4]
+					$GridContainer/BestLapCar1.text = position_array[5]
+					$GridContainer/ProgressCar1.text = position_array[6]
 
-			_update_navigation_path($Car2.position, Vector2(x, y)) 
-			#dynamicTrack2DLine.add_point(Vector2(x, y))
+				_update_navigation_path($Car2.position, Vector2(x, y)) 
+				#dynamicTrack2DLine.add_point(Vector2(x, y))
 			
 	
 
@@ -102,11 +96,11 @@ func move_along_path(distance): #Distance is pixels required to be traversed in 
 		distance -= distance_between_points
 		last_point = path[0]
 		path.remove(0)
-		print(path)
-		#socket.put_packet("lol".to_ascii())
+		#print(path)
+		#sender.put_packet("lol".to_ascii())
 		if Input.is_key_pressed(KEY_SPACE):	
-			print("space")
-			socket.put_packet("space".to_ascii())
+			#print("space")
+			sender.put_packet("space".to_ascii())
 	# The character reached the end of the path.
 	$Car2.position = last_point
 	set_process(false)
@@ -117,30 +111,30 @@ func _update_navigation_path(start_position, end_position):
 	# It returns a PoolVector2Array of points that lead you
 	# from the start_position to the end_position.
 	path = get_simple_path(start_position, end_position, true)
-	print(path)
+	#print(path)
 	# The first point is always the start_position.
 	# We don't need it in this example as it corresponds to the character's position.
 	path.remove(0)
 	set_process(true)
 
 func _init():
-	socket = PacketPeerUDP.new()
-	socket.set_dest_address(server_ip, port)
-	socket.put_packet("Started socket 1. Port 4242".to_ascii())
-	socket2 = PacketPeerUDP.new()
-	socket2.set_dest_address(server_ip, port2)
-	socket2.put_packet("Started socket 2. Port 2500".to_ascii())
+	sender = PacketPeerUDP.new()
+	sender.set_dest_address(server_ip, port)
+	sender.put_packet("Started sender. Port 4242".to_ascii())
+	listener = PacketPeerUDP.new()
+	listener.set_dest_address(server_ip, port2)
+	listener.put_packet("Started listener. Port 2500".to_ascii())
 	return
 
 
 			
 func _on_Button_pressed():
-	print("Button Pressed")
+	#print("Button Pressed")
 	pass # Replace with function body.
 
 
 func _on_Port_text_entered(new_text):
-	print(new_text)
+	#print(new_text)
 	pass # Replace with function body.
 	
 	

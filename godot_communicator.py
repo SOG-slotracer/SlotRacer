@@ -44,7 +44,6 @@ def godot_sender(udp_ip, udp_port, track):
         text = track[i]
         try:
             sock.settimeout(0.0001)
-            data2, addr2 = sock.recvfrom(1024)
             sock.sendto(text.encode('utf-8'), addr)
             time.sleep(0.1)
             continue
@@ -53,9 +52,12 @@ def godot_sender(udp_ip, udp_port, track):
             velocity = calculate.velocity(velocity, 0)
             radius = calculate.radius(x[i], x[i - 1], x[i - 2], y[i], y[i - 1], y[i - 2])
             centripetal_force = calculate.centripetal_force(velocity, radius)
+
             print("F: %s" % centripetal_force)
 
-            if velocity == 0:
+            if calculate.is_derailed(centripetal_force):
+                text = "derailed"
+            elif velocity == 0:
                 time.sleep(0.1)
             else:
                 time.sleep(1 / velocity)
@@ -69,7 +71,6 @@ def plot_track(track):
     x, y = coordinates.extract_x_and_y_values_lists(track)
     plt.scatter(x, y, c=colors)
     for i, number in enumerate(colors):
-        fulltext = "Number: {}".format(number)
         known_radius = calculate.radius(x[i], x[i-1], x[i-2], y[i], y[i-1], y[i-2])
         fulltext = "Number: {}\nRadius: {}".format(number, known_radius)
         plt.annotate(fulltext, (x[i], y[i]), fontsize=7)

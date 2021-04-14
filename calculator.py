@@ -6,6 +6,7 @@ CAR_MASS = 1
 GRAVITY = 9.81
 SLIDING_FRICTION_COEFFICIENT = 0.1
 AIR_FRICTION_COEFFICIENT = 0.005
+DERAIL_THRESHOLD = 7.5
 
 SLIDING_FRICTION = CAR_MASS * GRAVITY * SLIDING_FRICTION_COEFFICIENT
 
@@ -32,3 +33,7 @@ def radius(x1, x2, x3, y1, y2, y3):
 
 def centripetal_force(velocity, radius):
     return CAR_MASS * pow(velocity, 2) / radius
+
+
+def is_derailed(centripetal_force):
+    return abs(centripetal_force) > DERAIL_THRESHOLD
