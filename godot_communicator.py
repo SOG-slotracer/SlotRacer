@@ -44,6 +44,7 @@ def godot_sender(udp_ip, udp_port, track):
         text = track[i]
         try:
             sock.settimeout(0.0001)
+            data2, addr2 = sock.recvfrom(1024)
             sock.sendto(text.encode('utf-8'), addr)
             time.sleep(0.1)
             continue
