@@ -9,13 +9,10 @@ var position_array
 var x = 0
 var y = 0
 var thread
-#var server_ip = "192.168.2.42"
 var server_ip ="127.0.0.1"
 var port = 4242
 var port2 = 2500
-#var last_point = (["419.919","324.138"])
 
-onready var dynamicTrack2DLine = $DynamicTrackLayer/Line2D
 
 class communication:
 	var _server_ip
@@ -43,6 +40,11 @@ func _process(delta): #delta is FPS, which is automaticallly adjusted by the sys
 					  #depending on state of the computer at a given time
 	var walk_distance = character_speed * delta #this thus gives pixels/frame
 	move_along_path(walk_distance)
+	
+	if Input.is_key_pressed(KEY_SPACE):	
+		#If timer not started  --> Start timer!
+		print(OS.get_ticks_msec())
+		sender.put_packet("space".to_ascii())
 
 func _exit_tree():
 	thread.wait_to_finish()
@@ -66,20 +68,15 @@ func _thread_function(userdata):
 					$GridContainer/LastLapCar1.text = position_array[4]
 					$GridContainer/BestLapCar1.text = position_array[5]
 					$GridContainer/ProgressCar1.text = position_array[6]
-
 				_update_navigation_path($Car2.position, Vector2(x, y)) 
-				#dynamicTrack2DLine.add_point(Vector2(x, y))
-			
-	
 
 #https://docs.godotengine.org/en/latest/classes/class_packedbytearray.html#class-packedbytearray
 
 # The 'click' event is a custom input action defined in
 # Project > Project Settings > Input Map tab.
 func _input(event):
-	if not event.is_action_pressed("click"):
+	if event.is_action_pressed("click"):
 		return
-	#_update_navigation_path($Character.position, get_local_mouse_position())  # destination
 
 
 func move_along_path(distance): #Distance is pixels required to be traversed in this frame
@@ -97,10 +94,6 @@ func move_along_path(distance): #Distance is pixels required to be traversed in 
 		last_point = path[0]
 		path.remove(0)
 		#print(path)
-		#sender.put_packet("lol".to_ascii())
-		if Input.is_key_pressed(KEY_SPACE):	
-			#print("space")
-			sender.put_packet("space".to_ascii())
 	# The character reached the end of the path.
 	$Car2.position = last_point
 	set_process(false)
@@ -111,11 +104,11 @@ func _update_navigation_path(start_position, end_position):
 	# It returns a PoolVector2Array of points that lead you
 	# from the start_position to the end_position.
 	path = get_simple_path(start_position, end_position, true)
-	#print(path)
 	# The first point is always the start_position.
 	# We don't need it in this example as it corresponds to the character's position.
 	path.remove(0)
 	set_process(true)
+
 
 func _init():
 	sender = PacketPeerUDP.new()
@@ -127,7 +120,6 @@ func _init():
 	return
 
 
-			
 func _on_Button_pressed():
 	#print("Button Pressed")
 	pass # Replace with function body.
@@ -136,13 +128,10 @@ func _on_Button_pressed():
 func _on_Port_text_entered(new_text):
 	#print(new_text)
 	pass # Replace with function body.
-	
-	
-	
-	
+
+
 func _ready():
 	thread = Thread.new()
 	# Third argument is optional userdata, it can be any variable.
 	thread.start(self, "_thread_function", "Sogeti")
 
-			
