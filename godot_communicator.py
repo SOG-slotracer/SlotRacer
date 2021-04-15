@@ -73,7 +73,7 @@ def plot_track(track):
     plt.scatter(x, y, c=colors)
     for i, number in enumerate(colors):
         known_radius = calculate.radius(x[i], x[i-1], x[i-2], y[i], y[i-1], y[i-2])
-        fulltext = "Number: {}\nRadius: {}".format(number, round(known_radius)
+        fulltext = "Number: {}\nRadius: {}".format(number, round(known_radius))
         plt.annotate(fulltext, (x[i], y[i]), fontsize=7)
     plt.show()
 
