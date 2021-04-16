@@ -7,6 +7,7 @@ import threading
 import time
 
 velocity = 0
+time_stamp = time.time()
 
 
 def bind_port(udp_ip, udp_port):
@@ -22,6 +23,7 @@ def bind_port(udp_ip, udp_port):
 
 def godot_listener(udp_ip, udp_port):
     global velocity
+    global time_stamp
     # listen to if space is pressed (throttled)
     sock, addr = bind_port(udp_ip, udp_port)
     while True:
@@ -29,7 +31,8 @@ def godot_listener(udp_ip, udp_port):
             sock.settimeout(0.0001)
             data2, addr2 = sock.recvfrom(1024)
             if b'space' in data2:
-                velocity = calculate.velocity(velocity, 5)
+                velocity = calculate.velocity(velocity, time_stamp)
+                time_stamp = time.time()
         except socket.timeout:
             time.sleep(0.01)
             continue
@@ -37,6 +40,7 @@ def godot_listener(udp_ip, udp_port):
 
 def godot_sender(udp_ip, udp_port, track):
     global velocity
+    global time_stamp
     x, y = coordinates.extract_x_and_y_values_lists(track)
     sock, addr = bind_port(udp_ip, udp_port)
     i = 0
@@ -50,15 +54,17 @@ def godot_sender(udp_ip, udp_port, track):
             continue
         except socket.timeout:
             # drive car. sleep amount is inversely dependant of velocity
-            velocity = calculate.velocity(velocity, 0)
+            velocity = calculate.velocity(velocity, time_stamp, throttle_force=0)
+            time_stamp = time.time()
             radius = calculate.radius(x[i], x[i - 1], x[i - 2], y[i], y[i - 1], y[i - 2])
             centripetal_force = calculate.centripetal_force(velocity, radius)
 
             print("F: %s" % centripetal_force)
 
             if calculate.is_derailed(centripetal_force):
-                text = "derailed"
-            elif velocity == 0:
+                #text = "derailed"
+                sock.sendto("derailed".encode('utf-8'), addr)
+            elif velocity <= 3:
                 time.sleep(0.1)
             else:
                 time.sleep(1 / velocity)

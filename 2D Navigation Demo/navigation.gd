@@ -39,9 +39,8 @@ class car:
 		self._position_track = position_track
 		self._speed = speed
 
-func _physics_process(delta): #delta is FPS, which is automaticallly adjusted by the system
-					  #depending on state of the computer at a given time
-	var walk_distance = character_speed * delta #this thus gives pixels/frame
+func _physics_process(delta):  # Delta = 1/60
+	var walk_distance = character_speed * delta
 	move_along_path(walk_distance)
 	
 	if Input.is_key_pressed(KEY_SPACE):	
