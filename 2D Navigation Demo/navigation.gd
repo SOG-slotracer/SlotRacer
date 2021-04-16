@@ -1,3 +1,5 @@
+#https://docs.godotengine.org/en/latest/classes/class_packedbytearray.html#class-packedbytearray
+
 extends Navigation2D
 
 export(float) var character_speed = 30000.0 #Pixels / second
@@ -12,7 +14,8 @@ var thread
 var server_ip ="127.0.0.1"
 var port = 4242
 var port2 = 2500
-
+var timer = 0
+var start_time = 0
 
 class communication:
 	var _server_ip
@@ -36,18 +39,24 @@ class car:
 		self._position_track = position_track
 		self._speed = speed
 
-func _process(delta): #delta is FPS, which is automaticallly adjusted by the system
+func _physics_process(delta): #delta is FPS, which is automaticallly adjusted by the system
 					  #depending on state of the computer at a given time
 	var walk_distance = character_speed * delta #this thus gives pixels/frame
 	move_along_path(walk_distance)
 	
 	if Input.is_key_pressed(KEY_SPACE):	
-		#If timer not started  --> Start timer!
-		print(OS.get_ticks_msec())
+		if start_time == 0:
+			start_time = OS.get_ticks_msec()
 		sender.put_packet("space".to_ascii())
+	
+	if start_time !=0:
+		timer = OS.get_ticks_msec() - start_time
+	get_node("GridContainer").get_node("LastLapCar1").text = var2str(timer)
+
 
 func _exit_tree():
 	thread.wait_to_finish()
+
 
 func _thread_function(userdata):
 	print("A new thread for communication is created ", listener)
@@ -70,14 +79,6 @@ func _thread_function(userdata):
 					$GridContainer/ProgressCar1.text = position_array[6]
 				_update_navigation_path($Car2.position, Vector2(x, y)) 
 
-#https://docs.godotengine.org/en/latest/classes/class_packedbytearray.html#class-packedbytearray
-
-# The 'click' event is a custom input action defined in
-# Project > Project Settings > Input Map tab.
-func _input(event):
-	if event.is_action_pressed("click"):
-		return
-
 
 func move_along_path(distance): #Distance is pixels required to be traversed in this frame
 	var last_point = $Car2.position
@@ -96,7 +97,6 @@ func move_along_path(distance): #Distance is pixels required to be traversed in 
 		#print(path)
 	# The character reached the end of the path.
 	$Car2.position = last_point
-	set_process(false)
 
 
 func _update_navigation_path(start_position, end_position):
@@ -107,7 +107,6 @@ func _update_navigation_path(start_position, end_position):
 	# The first point is always the start_position.
 	# We don't need it in this example as it corresponds to the character's position.
 	path.remove(0)
-	set_process(true)
 
 
 func _init():
