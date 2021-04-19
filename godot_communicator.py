@@ -81,9 +81,9 @@ def plot_track(track):
 
 if __name__ == "__main__":
     GODOT_IP = '127.0.0.1'
-    track_1, track_2 = coordinates.load_tracks()
+    inner_track, outer_track = coordinates.load_tracks()
     listener = threading.Thread(target=godot_listener, args=(GODOT_IP, 4242))
-    sender = threading.Thread(target=godot_sender, args=(GODOT_IP, 2500, track_2))
+    sender = threading.Thread(target=godot_sender, args=(GODOT_IP, 2500, outer_track))
     listener.start()
     sender.start()
-    plot_track(track_2)
+    plot_track(outer_track)
