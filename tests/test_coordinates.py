@@ -13,8 +13,9 @@ TEST_TRACK_DICT = {
     'links': {
         'inner_to_outer_track': ['10,100', '50,50', '100,10'],
         'outer_to_inner_track': ['100,10', '50,50', '10,100']}}
+TEST_INNER_TRACK = ['1,1', '2,4', '3,9', '4,10', '5,15']
+TEST_OUTER_TRACK = ['10,1', '11,11', '12,111', '13,1111', '14,11111']
 
-# the tracks have a specific order structure, which has to be replicated to be tested
 # Test track 1 order:
 # -> inner_1, inner_2, inner_3, inner_1
 # -> links_in_to_out
@@ -30,7 +31,6 @@ TEST_TRACK_1_X = [1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 10.0, 50.0, 100.0,
                   13.0, 14.0, 10.0, 100.0, 50.0, 10.0, 4.0, 5.0]
 TEST_TRACK_1_Y = [1.0, 4.0, 9.0, 10.0, 15.0, 1.0, 100.0, 50.0, 10.0,
                   1111.0, 11111.0, 1.0, 10.0, 50.0, 100.0, 10.0, 15.0]
-
 # Test track 2 order:
 # -> outer_1
 # -> links_out_to_in
@@ -50,8 +50,8 @@ TEST_TRACK_2_Y = [1.0, 10.0, 50.0, 100.0, 10.0, 15.0, 1.0, 4.0, 9.0,
 
 def test_create_tracks():
     t1, t2 = coordinates.create_tracks(TEST_TRACK_DICT)
-    assert t1 == TEST_TRACK_1
-    assert t2 == TEST_TRACK_2
+    assert t1 == TEST_INNER_TRACK
+    assert t2 == TEST_OUTER_TRACK
 
 
 @pytest.mark.parametrize('test_track, expected_x, expected_y', [
