@@ -18,7 +18,7 @@ class communication:
 	var _server_ip
 	var _port
 	var _destination_ip
-	
+
 	func __init__(server_ip = "127.0.0.1", port=4242, destination_ip="127.0.0.1"):
 		self._server_ip = server_ip
 		self._port = port
@@ -29,7 +29,7 @@ class car:
 	var _color
 	var _position_track
 	var _speed
-	
+
 	func __init__(fuel=0, color='RED', position_track=0, speed=300):
 		self._fuel = fuel
 		self._color = color
@@ -40,8 +40,8 @@ func _process(delta): #delta is FPS, which is automaticallly adjusted by the sys
 					  #depending on state of the computer at a given time
 	var walk_distance = character_speed * delta #this thus gives pixels/frame
 	move_along_path(walk_distance)
-	
-	if Input.is_key_pressed(KEY_SPACE):	
+
+	if Input.is_key_pressed(KEY_SPACE):
 		#If timer not started  --> Start timer!
 		print(OS.get_ticks_msec())
 		sender.put_packet("space".to_ascii())
@@ -56,7 +56,7 @@ func _thread_function(userdata):
 		if data:
 			print(data)
 			if data == "derailed":
-				#If cart is derailed, game stops 
+				#If cart is derailed, game stops
 				print("test")
 			else:
 				position_array = data.rsplit(",", true, 6)
@@ -68,7 +68,7 @@ func _thread_function(userdata):
 					$GridContainer/LastLapCar1.text = position_array[4]
 					$GridContainer/BestLapCar1.text = position_array[5]
 					$GridContainer/ProgressCar1.text = position_array[6]
-				_update_navigation_path($Car2.position, Vector2(x, y)) 
+				_update_navigation_path($Car2.position, Vector2(x, y))
 
 #https://docs.godotengine.org/en/latest/classes/class_packedbytearray.html#class-packedbytearray
 
@@ -113,9 +113,9 @@ func _update_navigation_path(start_position, end_position):
 func _init():
 	sender = PacketPeerUDP.new()
 	sender.set_dest_address(server_ip, port)
-	sender.put_packet("Started sender. Port 4242".to_ascii())
+	# sender.put_packet("Started sender. Port 4242".to_ascii())
 	listener = PacketPeerUDP.new()
-	listener.set_dest_address(server_ip, port2)
+	listener.set_dest_address(server_ip, port)
 	listener.put_packet("Started listener. Port 2500".to_ascii())
 	return
 
