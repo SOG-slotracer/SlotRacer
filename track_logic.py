@@ -18,11 +18,10 @@ def run_simulation(track):
     communicator = godot_communicator.Connection(GODOT_IP, LISTENER_PORT)
     position = {'x': x[i], 'y': y[i], 'coordinate_reached': True}
     while True:
-        status = str(position['x']) + ',' + str(position['y'])
         new_data = communicator.receive_data()
         velocity = get_new_velocity(velocity, is_accelerating(new_data) if new_data else False)
-        next_coord = i + 1 if i != len(track) - 1 else 0
         if velocity > 0:
+            next_coord = i + 1 if i != len(track) - 1 else 0
             position = calculate.new_position(velocity, position['x'], x[next_coord],
                                               position['y'], y[next_coord], UPDATE_INTERVAL)
             if position['coordinate_reached']:

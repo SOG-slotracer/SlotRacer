@@ -58,6 +58,3 @@ def distance(delta_x, delta_y):
 def coordinate_reached(interval, total_time_needed):
     # Due to overshoot on the next loop, a '* 2' is added to go to the next coordinate 1 loop early
     return interval * 2 > total_time_needed
-
-
-
