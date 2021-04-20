@@ -113,7 +113,6 @@ func _update_navigation_path(start_position, end_position):
 func _init():
 	sender = PacketPeerUDP.new()
 	sender.set_dest_address(server_ip, port)
-	# sender.put_packet("Started sender. Port 4242".to_ascii())
 	listener = PacketPeerUDP.new()
 	listener.set_dest_address(server_ip, port)
 	listener.put_packet("Started listener. Port 2500".to_ascii())

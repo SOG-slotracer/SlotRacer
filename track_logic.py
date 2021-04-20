@@ -26,7 +26,7 @@ def run_simulation(track):
             i = i + 1 if i != len(track) - 1 else 0
             time.sleep(1 / velocity)
         else:
-            time.sleep(UPDATE_INTERVAL)
+            time.sleep(UPDATE_INTERVAL)  # TODO: investigate absolute 1/60th update time
 
 
 def get_new_velocity(old_velocity, is_accelerating):
