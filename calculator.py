@@ -19,7 +19,7 @@ def total_force(velocity, throttle_force):
 def velocity(old_velocity, throttle_force):
     acceleration = total_force(old_velocity, throttle_force) / CAR_MASS
     velocity = acceleration + old_velocity
-    return velocity if velocity >= 2 else 0
+    return velocity if velocity >= 1 else 0
 
 
 def radius(x1, x2, x3, y1, y2, y3):
