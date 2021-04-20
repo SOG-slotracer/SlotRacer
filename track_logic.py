@@ -8,7 +8,7 @@ import time
 GODOT_IP = '127.0.0.1'
 LISTENER_PORT = 4242
 UPDATE_INTERVAL = 1 / 60
-VELOCITY_MODIFIER = 2.5
+VELOCITY_MODIFIER = 70
 
 
 def run_simulation(track):
@@ -16,17 +16,28 @@ def run_simulation(track):
     x, y = coordinates.extract_x_and_y_values_lists(track)
     i = 0
     communicator = godot_communicator.Connection(GODOT_IP, LISTENER_PORT)
+    position = {'x': x[i], 'y': y[i], 'coordinate_reached': True}
     while True:
+        status = str(position['x']) + ',' + str(position['y'])
         new_data = communicator.receive_data()
         velocity = get_new_velocity(velocity, is_accelerating(new_data) if new_data else False)
-        text = track[i] if not is_derailed(velocity, x, y, i) else 'derailed'
-        communicator.send_data(text)
-        if velocity != 0:
-            # TODO: calculate when to jump to the next coordinate instead of always going on loop
-            i = i + 1 if i != len(track) - 1 else 0
-            time.sleep(1 / velocity)
+        next_coord = i + 1 if i != len(track) - 1 else 0
+        if velocity > 0:
+            position = calculate.new_position(velocity, position['x'], x[next_coord],
+                                              position['y'], y[next_coord], UPDATE_INTERVAL)
+            if position['coordinate_reached']:
+                i = next_coord
+        if not is_derailed(velocity, x, y, i):
+            status = str(position['x']) + ',' + str(position['y'])
         else:
-            time.sleep(UPDATE_INTERVAL)  # TODO: investigate absolute 1/60th update time
+            status = 'derailed'
+            # reset car and wait 2 seconds so the user can see they derailed
+            velocity = 0
+            position = {'x': x[0], 'y': y[0], 'coordinate_reached': True}
+            i = 0
+            time.sleep(2)
+        communicator.send_data(status)
+        time.sleep(UPDATE_INTERVAL)  # TODO: investigate absolute 1/60th update time
 
 
 def get_new_velocity(old_velocity, is_accelerating):

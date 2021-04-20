@@ -4,9 +4,9 @@ import sys
 
 CAR_MASS = 1
 GRAVITY = 9.81
-SLIDING_FRICTION_COEFFICIENT = 0.1
-AIR_FRICTION_COEFFICIENT = 0.005
-DERAIL_THRESHOLD = 7.5
+SLIDING_FRICTION_COEFFICIENT = 0.0001
+AIR_FRICTION_COEFFICIENT = 0.00035
+DERAIL_THRESHOLD = 5000
 
 SLIDING_FRICTION = CAR_MASS * GRAVITY * SLIDING_FRICTION_COEFFICIENT
 
@@ -19,7 +19,7 @@ def total_force(velocity, throttle_force):
 def velocity(old_velocity, throttle_force):
     acceleration = total_force(old_velocity, throttle_force) / CAR_MASS
     velocity = acceleration + old_velocity
-    return velocity if velocity >= 1 else 0
+    return velocity if velocity >= 60 else 0
 
 
 def radius(x1, x2, x3, y1, y2, y3):
@@ -37,3 +37,27 @@ def centripetal_force(velocity, radius):
 
 def is_derailed(centripetal_force):
     return abs(centripetal_force) > DERAIL_THRESHOLD
+
+
+def new_position(velocity, x1, x2, y1, y2, interval):
+    delta_x = x2 - x1
+    delta_y = y2 - y1
+    total_time_needed = distance(delta_x, delta_y) / velocity
+    velocity_x = delta_x / total_time_needed
+    velocity_y = delta_y / total_time_needed
+    return {'x': x1 + velocity_x * interval,
+            'y': y1 + velocity_y * interval,
+            'coordinate_reached': coordinate_reached(interval, total_time_needed)}
+
+
+def distance(delta_x, delta_y):
+    distance_pow = pow(delta_x, 2) + pow(delta_y, 2)
+    return math.sqrt(abs(distance_pow))
+
+
+def coordinate_reached(interval, total_time_needed):
+    # Due to overshoot on the next loop, a '* 2' is added to go to the next coordinate 1 loop early
+    return interval * 2 > total_time_needed
+
+
+
