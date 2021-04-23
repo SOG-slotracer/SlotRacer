@@ -1,8 +1,6 @@
 import calculator as calculate
 import coordinates
 import godot_communicator
-import matplotlib.pyplot as plt
-import numpy as np
 import time
 
 GODOT_IP = '127.0.0.1'
@@ -51,18 +49,6 @@ def is_derailed(velocity, x, y, i):
     radius = calculate.radius(x[i], x[i - 1], x[i - 2], y[i], y[i - 1], y[i - 2])
     centripetal_force = calculate.centripetal_force(velocity, radius)
     return calculate.is_derailed(centripetal_force)
-
-
-def plot_track(track):
-    colors = np.arange(len(track))
-    x, y = coordinates.extract_x_and_y_values_lists(track)
-    plt.scatter(x, y, c=colors)
-    for i, number in enumerate(colors):
-        known_radius = calculate.radius(x[i], x[i-1], x[i-2], y[i], y[i-1], y[i-2])
-        fulltext = "Number: {}\nRadius: {}".format(number, round(known_radius))
-        plt.annotate(fulltext, (x[i], y[i]), fontsize=7)
-        plt.gca().invert_yaxis()
-    plt.show()
 
 
 if __name__ == "__main__":
