@@ -23,12 +23,16 @@ def velocity(old_velocity, throttle_force):
 
 
 def radius(x1, x2, x3, y1, y2, y3):
-    point_1 = np.array([x1, y1])
-    point_2 = np.array([x2, y2])
-    point_3 = np.array([x3, y3])
-    w = math.hypot(x1 - x3, y1 - y3)
-    h = np.cross(point_3 - point_1, point_1 - point_2) / np.linalg.norm(point_3 - point_1)
-    return pow(w, 2) / (8 * h) + (h / 2) if h != 0 else sys.maxsize
+    if x2 - x1 == 0 or x3 - x2 == 0:
+        return sys.maxsize
+    ma = (y2 - y1) / (x2 - x1)
+    mb = (y3 - y2) / (x3 - x2)
+    if mb == 0:
+        return sys.maxsize
+    xc = ((ma * mb * (y1 - y3)) + (mb * (x1 + x2)) - (ma * (x2 + x3))) / (2 * (mb - ma))
+    yc = ((-1 / mb) * (xc - ((x2 + x3) / 2))) + ((y2 + y3) / 2)
+    radius = math.sqrt((xc - x1) * (xc - x1) + (yc - y1) * (yc - y1))
+    return radius
 
 
 def centripetal_force(velocity, radius):
