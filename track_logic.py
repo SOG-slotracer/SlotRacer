@@ -46,7 +46,7 @@ def is_accelerating(data):
 
 
 def is_derailed(velocity, x, y, i):
-    radius = calculate.radius(x[i], x[i - 1], x[i - 2], y[i], y[i - 1], y[i - 2])
+    radius = calculate.radius(x[i], y[i], x[i - 1], y[i - 1], x[i - 2], y[i - 2])
     centripetal_force = calculate.centripetal_force(velocity, radius)
     return calculate.is_derailed(centripetal_force)
 
