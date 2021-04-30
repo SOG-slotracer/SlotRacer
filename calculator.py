@@ -28,6 +28,7 @@ def velocity(old_velocity, throttle_force):
 
 
 def radius(x1, y1, x2, y2, x3, y3):
+    #formula found on: http://paulbourke.net/geometry/circlesphere/
     if x2 - x1 == 0 or x3 - x2 == 0: #can't divide by 0
         return sys.maxsize
     ma = (y2 - y1) / (x2 - x1)
