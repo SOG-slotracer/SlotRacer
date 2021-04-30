@@ -1,5 +1,4 @@
 import math
-import numpy as np
 import sys
 
 CAR_MASS = 1
@@ -9,6 +8,7 @@ AIR_FRICTION_COEFFICIENT = 0.00035
 DERAIL_THRESHOLD = 5000
 
 SLIDING_FRICTION = CAR_MASS * GRAVITY * SLIDING_FRICTION_COEFFICIENT
+
 
 def calculate_air_friction(velocity):
     return AIR_FRICTION_COEFFICIENT / 2 * pow(velocity, 2)
@@ -28,12 +28,12 @@ def velocity(old_velocity, throttle_force):
 
 
 def radius(x1, y1, x2, y2, x3, y3):
-    #formula found on: http://paulbourke.net/geometry/circlesphere/
-    if x2 - x1 == 0 or x3 - x2 == 0: #can't divide by 0
+    #  formula found on: http://paulbourke.net/geometry/circlesphere/
+    if x2 - x1 == 0 or x3 - x2 == 0:  # can't divide by 0
         return sys.maxsize
     ma = (y2 - y1) / (x2 - x1)
     mb = (y3 - y2) / (x3 - x2)
-    if mb == 0: #can't divide by 0
+    if mb == 0:  # can't divide by 0
         return sys.maxsize
 
     xc = ((ma * mb * (y1 - y3)) + (mb * (x1 + x2)) - (ma * (x2 + x3))) / (2 * (mb - ma))
