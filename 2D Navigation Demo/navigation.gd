@@ -5,13 +5,18 @@ var communicator
 var thread
 var start_tick
 var close_game
+var cars
 
-var CHARACTER_SPEED = 100000
 var SERVER_IP ="127.0.0.1"
 var PORT = 4242
+var CHARACTER_SPEED = 100000
 
 var exampleJSON: String = '{"eBooks":[{"language":"Pascal","edition":"third"}'\
 + ',{"language":"Python","edition":"four"},{"language":"SQL","edition":"second"}]}'
+var realExampleJSON: String = '{"playerCar": {"name": "playerCar", "velocity":'\
++ ' 15, "derailed": false, "coordinate": "1,1", "race_position": 1}, "cpuCar": '\
++ '{"name": "cpuCar", "velocity": 15, "derailed": true, "coordinate": "2,2", '\
++ '"race_position": 2}}'
 
 class Communication:
 	var server_ip
@@ -36,13 +41,11 @@ class Car:
 	var race_position
 	var best_lap
 	var last_lap
-	var color
 	
-	func _init(name="car", velocity=0, position_track=0, color='RED'):
+	func _init(name="Car", velocity=0, race_position=0):
 		self.name = name
 		self.velocity = velocity
 		self.race_position = race_position
-		self.color = color
 
 
 func _physics_process(delta):
@@ -64,9 +67,14 @@ func thread_check_incoming(userdata):
 		if data:
 			print(data)
 			
-			var dictionary: Dictionary = JSON.parse(exampleJSON).result
-			print(dictionary["eBooks"][0]["edition"])
-			# update_car_classes(dictionary)
+			var dictionary: Dictionary = JSON.parse(realExampleJSON).result
+			# print(dictionary["eBooks"][0]["edition"])
+			# var dictionary: Dictionary = JSON.parse(data).result
+			# var dictionary
+			update_car_classes(dictionary)
+			update_info_grid()
+			print(is_derailed(dictionary))
+			
 			
 			if data == "derailed":
 				#If cart is derailed, game stops
@@ -83,7 +91,7 @@ func thread_check_incoming(userdata):
 					$GridContainer/LastLapCar1.text = position_array[4]
 					$GridContainer/BestLapCar1.text = position_array[5]
 					$GridContainer/ProgressCar1.text = position_array[6]
-				update_navigation_path($Car2.position, Vector2(x, y))
+				update_navigation_path($cpuCar.position, Vector2(x, y))
 
 
 func _input(event):
@@ -112,8 +120,28 @@ func get_data():
 
 
 func update_car_classes(data):
+	print(cars[0].velocity)
+	print(cars[1].velocity)
 	# car classes should be updated with data in JSON format
-	return data
+	for car in cars:
+		for variable in car.get_property_list():
+			if variable.usage == 8192 && variable.name in data[car.name]:
+				# All properties are given, but only properties with usage 8192
+				# are variables of the class.
+				# Variable is only updated if it present in JSON message
+				car[variable.name] = data[car.name][variable.name]
+
+
+func update_info_grid():
+	# pushes the information from car classes into the grid container
+		pass
+
+
+func is_derailed(data):
+	for car in cars:
+		if data[car.name]['derailed'] == true:
+			return true
+	return false
 
 
 func start_timer():
@@ -148,19 +176,19 @@ func ms_To_mm_ss_msmsms(time):
 
 
 func move_along_path(distance): # Distance is pixels required to be traversed in this frame
-	var last_point = $Car2.position
+	var last_point = $cpuCar.position
 	while path.size(): # Path is an array of points that led us to the current position
 		var distance_between_points = last_point.distance_to(path[0])
 		# The position to move to falls between two points.
 		if distance <= distance_between_points:
-			$Car2.position = last_point.linear_interpolate(path[0], distance / distance_between_points)
+			$cpuCar.position = last_point.linear_interpolate(path[0], distance / distance_between_points)
 			return
 		# The position is past the end of the segment.
 		distance -= distance_between_points
 		last_point = path[0]
 		path.remove(0)
 	# The character reached the end of the path.
-	$Car2.position = last_point
+	$cpuCar.position = last_point
 	set_physics_process(false)
 
 
@@ -178,6 +206,12 @@ func _init():
 	communicator = Communication.new(SERVER_IP, PORT)
 	communicator.start_communication()
 	print("A new thread for communication is created ", communicator.socket)
+	
+	cars = [Car.new("playerCar", 0, 0), Car.new("cpuCar", 0, 1)]
+	#print(cars[0].get_property_list())
+	#for item in cars[0].get_property_list():
+		#if item.usage == 8192:
+			#print(item.name)
 
 
 func _on_Port_text_entered(new_text):

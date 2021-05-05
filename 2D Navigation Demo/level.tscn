@@ -24,7 +24,7 @@ position = Vector2( 420.572, 284.814 )
 scale = Vector2( 0.58, 0.91 )
 texture = ExtResource( 2 )
 
-[node name="Car1" type="Sprite" parent="."]
+[node name="playerCar" type="Sprite" parent="."]
 position = Vector2( 419.919, 324.138 )
 scale = Vector2( 0.03, 0.03 )
 texture = ExtResource( 3 )
@@ -181,7 +181,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Car2" type="Sprite" parent="."]
+[node name="cpuCar" type="Sprite" parent="."]
 position = Vector2( 446.612, 374.658 )
 scale = Vector2( 0.03, 0.03 )
 texture = ExtResource( 3 )
