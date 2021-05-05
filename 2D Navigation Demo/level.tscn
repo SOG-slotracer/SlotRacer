@@ -24,7 +24,7 @@ position = Vector2( 420.572, 284.814 )
 scale = Vector2( 0.58, 0.91 )
 texture = ExtResource( 2 )
 
-[node name="Character" type="Sprite" parent="."]
+[node name="Car1" type="Sprite" parent="."]
 position = Vector2( 419.919, 324.138 )
 scale = Vector2( 0.03, 0.03 )
 texture = ExtResource( 3 )
@@ -156,15 +156,15 @@ text = "Timer"
 
 [node name="PanelContainer" type="PanelContainer" parent="Control/Legend2"]
 margin_left = 41.0
-margin_right = 91.0
+margin_right = 140.0
 margin_bottom = 28.0
 
 [node name="Timerlabel" type="Label" parent="Control/Legend2/PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 43.0
+margin_right = 92.0
 margin_bottom = 21.0
-text = "00:00"
+text = "00:00:000"
 align = 1
 
 [node name="Derailed" type="Label" parent="."]
