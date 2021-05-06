@@ -11,12 +11,11 @@ var SERVER_IP ="127.0.0.1"
 var PORT = 4242
 var CHARACTER_SPEED = 100000
 
-var exampleJSON: String = '{"eBooks":[{"language":"Pascal","edition":"third"}'\
-+ ',{"language":"Python","edition":"four"},{"language":"SQL","edition":"second"}]}'
-var realExampleJSON: String = '{"playerCar": {"name": "playerCar", "velocity":'\
-+ ' 15, "derailed": false, "coordinate": "1,1", "race_position": 1}, "cpuCar": '\
-+ '{"name": "cpuCar", "velocity": 15, "derailed": true, "coordinate": "2,2", '\
-+ '"race_position": 2}}'
+var ExampleJSON: String = '{"playerCar": {"name": "playerCar", '\
++ '"race_position": 1, "velocity": 12, "last_lap": "undefined", "best_lap": '\
++ '"undefined", "derailed": false, "coordinate": "1,1"}, "cpuCar": {"name": '\
++ '"cpuCar", "race_position": 2, "velocity": 13, "last_lap": "undefined", '\
++ '"best_lap": "undefined", "derailed": false, "coordinate": "2,2"}}'
 
 class Communication:
 	var server_ip
@@ -41,6 +40,7 @@ class Car:
 	var race_position
 	var best_lap
 	var last_lap
+	var progress
 	
 	func _init(name="Car", velocity=0, race_position=0):
 		self.name = name
@@ -67,19 +67,20 @@ func thread_check_incoming(userdata):
 		if data:
 			print(data)
 			
-			var dictionary: Dictionary = JSON.parse(realExampleJSON).result
-			# print(dictionary["eBooks"][0]["edition"])
-			# var dictionary: Dictionary = JSON.parse(data).result
-			# var dictionary
-			update_car_classes(dictionary)
-			update_info_grid()
-			print(is_derailed(dictionary))
+			#var dictionary: Dictionary = JSON.parse(ExampleJSON).result
+			#data = JSON.parse(data).result
 			
+			#update_car_classes(data)
+			#update_info_grid()
+			
+			#if is_derailed(data):
+				#show_derailed()
+			#else:
+				#drive_cars()
 			
 			if data == "derailed":
 				#If cart is derailed, game stops
 				$Derailed.visible = true
-				print("derailed!")
 				reset_timer()
 			else:
 				var position_array = data.rsplit(",", true, 6)
@@ -134,7 +135,33 @@ func update_car_classes(data):
 
 func update_info_grid():
 	# pushes the information from car classes into the grid container
-		pass
+	$GridContainer/PositionPlayerCar.text = cars[0].race_position
+	$GridContainer/PositionCpuCar.text = cars[1].race_position
+	$GridContainer/VelocityPlayerCar.text = cars[0].velocity
+	$GridContainer/VelocityCpuCar.text = cars[1].velocity
+	$GridContainer/LastLapPlayerCar.text = cars[0].last_lap
+	$GridContainer/LastLapCpuCar.text = cars[1].last_lap
+	$GridContainer/BestLapPlayerCar.text = cars[0].best_lap
+	$GridContainer/BestLapCpuCar.text = cars[1].best_lap
+	$GridContainer/ProgressPlayerCar.text = cars[0].progress
+	$GridContainer/ProgressCpuCar.text = cars[1].progress
+
+
+func show_derailed():
+	$Derailed.visible = true
+	reset_timer()
+
+
+func drive_cars():
+	for car in cars:
+		var position_array = split_coordinate_string(car.coordinate)
+		var x = position_array[0]
+		var y = position_array[1]
+		update_navigation_path(get_node(car.name).position, Vector2(x, y))
+
+
+func split_coordinate_string(string):
+	return string.rsplit(",", true, 6)
 
 
 func is_derailed(data):
@@ -203,15 +230,13 @@ func update_navigation_path(start_position, end_position):
 
 
 func _init():
+	# setup UDP communication
 	communicator = Communication.new(SERVER_IP, PORT)
 	communicator.start_communication()
 	print("A new thread for communication is created ", communicator.socket)
 	
+	# initialize two car classes
 	cars = [Car.new("playerCar", 0, 0), Car.new("cpuCar", 0, 1)]
-	#print(cars[0].get_property_list())
-	#for item in cars[0].get_property_list():
-		#if item.usage == 8192:
-			#print(item.name)
 
 
 func _on_Port_text_entered(new_text):

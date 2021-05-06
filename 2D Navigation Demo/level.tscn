@@ -156,13 +156,13 @@ text = "Timer"
 
 [node name="PanelContainer" type="PanelContainer" parent="Control/Legend2"]
 margin_left = 41.0
-margin_right = 140.0
+margin_right = 119.0
 margin_bottom = 28.0
 
 [node name="Timerlabel" type="Label" parent="Control/Legend2/PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 92.0
+margin_right = 71.0
 margin_bottom = 21.0
 text = "00:00:000"
 align = 1
@@ -243,7 +243,7 @@ margin_right = 117.0
 margin_bottom = 56.0
 text = "Position"
 
-[node name="PositionCar1" type="Label" parent="GridContainer"]
+[node name="PositionPlayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 32.0
 margin_right = 238.0
@@ -253,7 +253,7 @@ size_flags_vertical = 3
 text = "1"
 align = 1
 
-[node name="PositionCar2" type="Label" parent="GridContainer"]
+[node name="PositionCpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 32.0
 margin_right = 359.0
@@ -271,7 +271,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Speed (km/h)"
 
-[node name="SpeedCar1" type="Label" parent="GridContainer"]
+[node name="VelocityPlayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 60.0
 margin_right = 238.0
@@ -281,7 +281,7 @@ size_flags_vertical = 3
 text = "10"
 align = 1
 
-[node name="SpeedCar2" type="Label" parent="GridContainer"]
+[node name="VelocityCpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 60.0
 margin_right = 359.0
@@ -299,7 +299,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Last lap time"
 
-[node name="LastLapCar1" type="Label" parent="GridContainer"]
+[node name="LastLapPlayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 88.0
 margin_right = 238.0
@@ -309,7 +309,7 @@ size_flags_vertical = 3
 text = "0:21"
 align = 1
 
-[node name="LastLapCar2" type="Label" parent="GridContainer"]
+[node name="LastLapCpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 88.0
 margin_right = 359.0
@@ -327,7 +327,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Best lap time"
 
-[node name="BestLapCar1" type="Label" parent="GridContainer"]
+[node name="BestLapPlayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 116.0
 margin_right = 238.0
@@ -337,7 +337,7 @@ size_flags_vertical = 3
 text = "0:19"
 align = 1
 
-[node name="BestLapCar2" type="Label" parent="GridContainer"]
+[node name="BestLapCpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 116.0
 margin_right = 359.0
@@ -355,7 +355,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Laps completed"
 
-[node name="ProgressCar1" type="Label" parent="GridContainer"]
+[node name="ProgressPlayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 144.0
 margin_right = 238.0
@@ -365,7 +365,7 @@ size_flags_vertical = 3
 text = "3/60"
 align = 1
 
-[node name="ProgressCar2" type="Label" parent="GridContainer"]
+[node name="ProgressCpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 144.0
 margin_right = 359.0
