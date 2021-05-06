@@ -24,7 +24,7 @@ position = Vector2( 420.572, 284.814 )
 scale = Vector2( 0.58, 0.91 )
 texture = ExtResource( 2 )
 
-[node name="Character" type="Sprite" parent="."]
+[node name="playerCar" type="Sprite" parent="."]
 position = Vector2( 419.919, 324.138 )
 scale = Vector2( 0.03, 0.03 )
 texture = ExtResource( 3 )
@@ -48,23 +48,13 @@ __meta__ = {
 }
 
 [node name="ServerIP" type="Label" parent="Control"]
-margin_left = 620.398
+margin_left = 621.521
 margin_top = 15.0945
-margin_right = 728.398
+margin_right = 729.521
 margin_bottom = 30.0945
 hint_tooltip = "Enter race track server IP"
 text = "000.000.000.000"
 script = ExtResource( 4 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Button" type="Button" parent="Control"]
-margin_left = 333.758
-margin_top = 260.093
-margin_right = 525.758
-margin_bottom = 285.093
-text = "Press Spacebar to Speed up!"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -79,7 +69,119 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Car2" type="Sprite" parent="."]
+[node name="Legend" type="GridContainer" parent="Control"]
+margin_left = 361.0
+margin_top = 44.0
+margin_right = 523.0
+margin_bottom = 136.0
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Throttle" type="Label" parent="Control/Legend"]
+margin_top = 7.0
+margin_right = 65.0
+margin_bottom = 21.0
+text = "Throttle"
+
+[node name="PanelContainer" type="PanelContainer" parent="Control/Legend"]
+margin_left = 69.0
+margin_right = 159.0
+margin_bottom = 28.0
+
+[node name="Label" type="Label" parent="Control/Legend/PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 83.0
+margin_bottom = 21.0
+text = "Press Space"
+align = 1
+
+[node name="Restart" type="Label" parent="Control/Legend"]
+margin_top = 39.0
+margin_right = 65.0
+margin_bottom = 53.0
+text = "Restart"
+
+[node name="PanelContainer2" type="PanelContainer" parent="Control/Legend"]
+margin_left = 69.0
+margin_top = 32.0
+margin_right = 159.0
+margin_bottom = 60.0
+
+[node name="Label" type="Label" parent="Control/Legend/PanelContainer2"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 83.0
+margin_bottom = 21.0
+text = "Press R"
+align = 1
+
+[node name="End Game" type="Label" parent="Control/Legend"]
+margin_top = 71.0
+margin_right = 65.0
+margin_bottom = 85.0
+text = "End Game"
+
+[node name="PanelContainer3" type="PanelContainer" parent="Control/Legend"]
+margin_left = 69.0
+margin_top = 64.0
+margin_right = 159.0
+margin_bottom = 92.0
+
+[node name="Label" type="Label" parent="Control/Legend/PanelContainer3"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 83.0
+margin_bottom = 21.0
+text = "Press Esc"
+align = 1
+
+[node name="Legend2" type="GridContainer" parent="Control"]
+margin_left = 556.0
+margin_top = 44.0
+margin_right = 715.0
+margin_bottom = 136.0
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Timer" type="Label" parent="Control/Legend2"]
+margin_top = 7.0
+margin_right = 37.0
+margin_bottom = 21.0
+text = "Timer"
+
+[node name="PanelContainer" type="PanelContainer" parent="Control/Legend2"]
+margin_left = 41.0
+margin_right = 119.0
+margin_bottom = 28.0
+
+[node name="Timerlabel" type="Label" parent="Control/Legend2/PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 71.0
+margin_bottom = 21.0
+text = "00:00:000"
+align = 1
+
+[node name="Derailed" type="Label" parent="."]
+visible = false
+margin_left = 24.2599
+margin_top = 260.339
+margin_right = 823.26
+margin_bottom = 353.339
+custom_colors/font_color = Color( 0.894118, 0.941176, 0.109804, 1 )
+text = "You derailed from the track!
+Press R to restart"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="cpuCar" type="Sprite" parent="."]
 position = Vector2( 446.612, 374.658 )
 scale = Vector2( 0.03, 0.03 )
 texture = ExtResource( 3 )
@@ -141,7 +243,7 @@ margin_right = 117.0
 margin_bottom = 56.0
 text = "Position"
 
-[node name="PositionCar1" type="Label" parent="GridContainer"]
+[node name="PositionPlayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 32.0
 margin_right = 238.0
@@ -151,7 +253,7 @@ size_flags_vertical = 3
 text = "1"
 align = 1
 
-[node name="PositionCar2" type="Label" parent="GridContainer"]
+[node name="PositionCpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 32.0
 margin_right = 359.0
@@ -169,7 +271,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Speed (km/h)"
 
-[node name="SpeedCar1" type="Label" parent="GridContainer"]
+[node name="VelocityPlayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 60.0
 margin_right = 238.0
@@ -179,7 +281,7 @@ size_flags_vertical = 3
 text = "10"
 align = 1
 
-[node name="SpeedCar2" type="Label" parent="GridContainer"]
+[node name="VelocityCpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 60.0
 margin_right = 359.0
@@ -197,7 +299,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Last lap time"
 
-[node name="LastLapCar1" type="Label" parent="GridContainer"]
+[node name="LastLapPlayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 88.0
 margin_right = 238.0
@@ -207,7 +309,7 @@ size_flags_vertical = 3
 text = "0:21"
 align = 1
 
-[node name="LastLapCar2" type="Label" parent="GridContainer"]
+[node name="LastLapCpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 88.0
 margin_right = 359.0
@@ -225,7 +327,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Best lap time"
 
-[node name="BestLapCar1" type="Label" parent="GridContainer"]
+[node name="BestLapPlayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 116.0
 margin_right = 238.0
@@ -235,7 +337,7 @@ size_flags_vertical = 3
 text = "0:19"
 align = 1
 
-[node name="BestLapCar2" type="Label" parent="GridContainer"]
+[node name="BestLapCpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 116.0
 margin_right = 359.0
@@ -253,7 +355,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Laps completed"
 
-[node name="ProgressCar1" type="Label" parent="GridContainer"]
+[node name="ProgressPlayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 144.0
 margin_right = 238.0
@@ -263,7 +365,7 @@ size_flags_vertical = 3
 text = "3/60"
 align = 1
 
-[node name="ProgressCar2" type="Label" parent="GridContainer"]
+[node name="ProgressCpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 144.0
 margin_right = 359.0
@@ -272,6 +374,5 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "3/60"
 align = 1
-[connection signal="pressed" from="Control/Button" to="." method="_on_Button_pressed"]
 [connection signal="text_entered" from="Control/Port" to="." method="_on_Port_text_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
