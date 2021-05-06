@@ -22,10 +22,9 @@ class Car:
         self.position = 1
         self.CpuControlled = cpu_controlled
         self.derailed = False
-        self.lap = 0
         self.best_lap = -1
         self.last_lap = -1
-        self.progress = "0/3"
+        self.progress = 0
 
     def is_accelerating(self, data):
         if self.CpuControlled:
@@ -76,9 +75,8 @@ class Car:
                 self.lap_complete()
     
     def lap_complete(self):
-        self.lap = self.lap+1
-        print("Laps completed: " + str(self.lap))
-        return 0
+        self.progress += 1
+        print("Laps completed: " + str(self.progress))
 
     def get_dictionary(self):
         dictionary = {

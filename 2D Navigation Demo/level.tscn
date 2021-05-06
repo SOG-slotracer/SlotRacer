@@ -362,7 +362,7 @@ margin_right = 238.0
 margin_bottom = 168.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "3/60"
+text = "0"
 align = 1
 
 [node name="ProgresscpuCar" type="Label" parent="GridContainer"]
@@ -372,7 +372,7 @@ margin_right = 359.0
 margin_bottom = 168.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "3/60"
+text = "0"
 align = 1
 [connection signal="text_entered" from="Control/Port" to="." method="_on_Port_text_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

@@ -65,7 +65,6 @@ func thread_check_incoming(userdata):
 			return # close thread upon closing of game
 		var data = get_data()
 		if data:
-			#print(data)
 			data = JSON.parse(data).result
 			
 			update_car_classes(data)
