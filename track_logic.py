@@ -31,9 +31,9 @@ class Car:
     def check_for_reset(self, data):
         if data:
             if(self.CpuControlled):
-                self.derailed = True if b'cpu_reset' in data else False
+                self.derailed = False if b'cpu_reset' in data else True
             else: 
-                self.derailed = True if b'reset' in data else False
+                self.derailed = False if b'reset' in data else True
                 
     def is_derailed(self):
         i = self.currentCoordinate
@@ -60,7 +60,11 @@ class Car:
 
 
     def update_velocity(self, new_data):
-        self.velocity = get_new_velocity(self.velocity, self.is_accelerating(new_data) if new_data else False)
+        #self.velocity = get_new_velocity(self.velocity, self.is_accelerating(new_data) if new_data else False)
+        if new_data:
+            self.velocity = calculate.velocity(self.velocity, VELOCITY_MODIFIER if self.is_accelerating(new_data) else 0)
+        else:
+            self.velocity = calculate.velocity(self.velocity, 0)
 
 
     def calculate_position(self):
@@ -113,14 +117,6 @@ def game_loop(cars):
             status = car.get_status()
 
         communicator.set_data(status)
-
-
-def get_new_velocity(old_velocity, is_accelerating):
-    return calculate.velocity(old_velocity, VELOCITY_MODIFIER if is_accelerating else 0)
-
-
-def is_restarting(data):
-    return True if b'restart' in data else False
 
 
 if __name__ == "__main__":
