@@ -9,7 +9,7 @@ var cars
 
 var SERVER_IP ="127.0.0.1"
 var PORT = 4242
-var CHARACTER_SPEED = 100000
+var CHARACTER_SPEED = 10000000
 
 var ExampleJSON: String = '{"playerCar": {"name": "playerCar", '\
 + '"race_position": 1, "velocity": 12, "last_lap": "undefined", "best_lap": '\
@@ -65,34 +65,16 @@ func thread_check_incoming(userdata):
 			return # close thread upon closing of game
 		var data = get_data()
 		if data:
-			print(data)
+			#print(data)
+			data = JSON.parse(data).result
 			
-			#var dictionary: Dictionary = JSON.parse(ExampleJSON).result
-			#data = JSON.parse(data).result
+			update_car_classes(data)
+			update_info_grid()
 			
-			#update_car_classes(data)
-			#update_info_grid()
-			
-			#if is_derailed(data):
-				#show_derailed()
-			#else:
-				#drive_cars()
-			
-			if data == "derailed":
-				#If cart is derailed, game stops
-				$Derailed.visible = true
-				reset_timer()
+			if is_derailed(data):
+				show_derailed()
 			else:
-				var position_array = data.rsplit(",", true, 6)
-				var x = position_array[0]
-				var y = position_array[1]
-				if position_array.size() == 7:
-					$GridContainer/PositionCar1.text = position_array[2]
-					$GridContainer/SpeedCar1.text = position_array[3]
-					$GridContainer/LastLapCar1.text = position_array[4]
-					$GridContainer/BestLapCar1.text = position_array[5]
-					$GridContainer/ProgressCar1.text = position_array[6]
-				update_navigation_path($cpuCar.position, Vector2(x, y))
+				drive_cars()
 
 
 func _input(event):
@@ -121,8 +103,7 @@ func get_data():
 
 
 func update_car_classes(data):
-	print(cars[0].velocity)
-	print(cars[1].velocity)
+	# print(cars[0].velocity)
 	# car classes should be updated with data in JSON format
 	for car in cars:
 		for variable in car.get_property_list():
@@ -135,16 +116,19 @@ func update_car_classes(data):
 
 func update_info_grid():
 	# pushes the information from car classes into the grid container
-	$GridContainer/PositionPlayerCar.text = cars[0].race_position
-	$GridContainer/PositionCpuCar.text = cars[1].race_position
-	$GridContainer/VelocityPlayerCar.text = cars[0].velocity
-	$GridContainer/VelocityCpuCar.text = cars[1].velocity
-	$GridContainer/LastLapPlayerCar.text = cars[0].last_lap
-	$GridContainer/LastLapCpuCar.text = cars[1].last_lap
-	$GridContainer/BestLapPlayerCar.text = cars[0].best_lap
-	$GridContainer/BestLapCpuCar.text = cars[1].best_lap
-	$GridContainer/ProgressPlayerCar.text = cars[0].progress
-	$GridContainer/ProgressCpuCar.text = cars[1].progress
+	for car in cars:
+		if car.name:
+			get_node("GridContainer/Panel" + car.name + "/Name" + car.name).text = str(car.name)
+		if car.race_position:
+			get_node("GridContainer/Position" + car.name).text = str(car.race_position)
+		if car.velocity:
+			get_node("GridContainer/Velocity" + car.name).text = str(round(car.velocity))
+		if car.last_lap:
+			get_node("GridContainer/LastLap" + car.name).text = str(car.last_lap)
+		if car.best_lap:
+			get_node("GridContainer/BestLap" + car.name).text = str(car.best_lap)
+		if car.progress:
+			get_node("GridContainer/Progress" + car.name).text = str(car.progress)
 
 
 func show_derailed():
@@ -154,9 +138,9 @@ func show_derailed():
 
 func drive_cars():
 	for car in cars:
-		var position_array = split_coordinate_string(car.coordinate)
-		var x = position_array[0]
-		var y = position_array[1]
+		var x = car.coordinate.x
+		var y = car.coordinate.y
+		print(String(x) + " " + String(y))
 		update_navigation_path(get_node(car.name).position, Vector2(x, y))
 
 

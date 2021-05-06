@@ -211,12 +211,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PanelContainer" type="PanelContainer" parent="GridContainer"]
+[node name="PanelplayerCar" type="PanelContainer" parent="GridContainer"]
 margin_left = 121.0
 margin_right = 238.0
 margin_bottom = 28.0
 
-[node name="Label" type="Label" parent="GridContainer/PanelContainer"]
+[node name="NameplayerCar" type="Label" parent="GridContainer/PanelplayerCar"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 110.0
@@ -224,12 +224,12 @@ margin_bottom = 21.0
 text = "Ferrari"
 align = 1
 
-[node name="PanelContainer2" type="PanelContainer" parent="GridContainer"]
+[node name="PanelcpuCar" type="PanelContainer" parent="GridContainer"]
 margin_left = 242.0
 margin_right = 359.0
 margin_bottom = 28.0
 
-[node name="Label" type="Label" parent="GridContainer/PanelContainer2"]
+[node name="NamecpuCar" type="Label" parent="GridContainer/PanelcpuCar"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 110.0
@@ -243,7 +243,7 @@ margin_right = 117.0
 margin_bottom = 56.0
 text = "Position"
 
-[node name="PositionPlayerCar" type="Label" parent="GridContainer"]
+[node name="PositionplayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 32.0
 margin_right = 238.0
@@ -253,7 +253,7 @@ size_flags_vertical = 3
 text = "1"
 align = 1
 
-[node name="PositionCpuCar" type="Label" parent="GridContainer"]
+[node name="PositioncpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 32.0
 margin_right = 359.0
@@ -271,7 +271,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Speed (km/h)"
 
-[node name="VelocityPlayerCar" type="Label" parent="GridContainer"]
+[node name="VelocityplayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 60.0
 margin_right = 238.0
@@ -281,7 +281,7 @@ size_flags_vertical = 3
 text = "10"
 align = 1
 
-[node name="VelocityCpuCar" type="Label" parent="GridContainer"]
+[node name="VelocitycpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 60.0
 margin_right = 359.0
@@ -299,7 +299,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Last lap time"
 
-[node name="LastLapPlayerCar" type="Label" parent="GridContainer"]
+[node name="LastLapplayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 88.0
 margin_right = 238.0
@@ -309,7 +309,7 @@ size_flags_vertical = 3
 text = "0:21"
 align = 1
 
-[node name="LastLapCpuCar" type="Label" parent="GridContainer"]
+[node name="LastLapcpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 88.0
 margin_right = 359.0
@@ -327,7 +327,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Best lap time"
 
-[node name="BestLapPlayerCar" type="Label" parent="GridContainer"]
+[node name="BestLapplayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 116.0
 margin_right = 238.0
@@ -337,7 +337,7 @@ size_flags_vertical = 3
 text = "0:19"
 align = 1
 
-[node name="BestLapCpuCar" type="Label" parent="GridContainer"]
+[node name="BestLapcpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 116.0
 margin_right = 359.0
@@ -355,7 +355,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Laps completed"
 
-[node name="ProgressPlayerCar" type="Label" parent="GridContainer"]
+[node name="ProgressplayerCar" type="Label" parent="GridContainer"]
 margin_left = 121.0
 margin_top = 144.0
 margin_right = 238.0
@@ -365,7 +365,7 @@ size_flags_vertical = 3
 text = "3/60"
 align = 1
 
-[node name="ProgressCpuCar" type="Label" parent="GridContainer"]
+[node name="ProgresscpuCar" type="Label" parent="GridContainer"]
 margin_left = 242.0
 margin_top = 144.0
 margin_right = 359.0

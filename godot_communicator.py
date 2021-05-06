@@ -2,9 +2,11 @@ import socket
 import time
 import threading
 
+
 class Connection:
     timestamp = time.time()
     text = ""
+
     def __init__(self, ip: str, listener_port: int):
         self.godot_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.godot_socket.bind((ip, listener_port))
@@ -16,8 +18,11 @@ class Connection:
         try:
             self.godot_socket.settimeout(0.0001)
             data, addr = self.godot_socket.recvfrom(1024)
-            interval = time.time() - Connection.timestamp
-            Connection.timestamp = time.time()
+
+            # interval = time.time() - Connection.timestamp
+            # print(1/interval)
+            # Connection.timestamp = time.time()
+
             return data
         except socket.timeout:
             return
@@ -29,7 +34,8 @@ class Connection:
             start_time = time.time()
             self.godot_socket.sendto(self.text.encode('utf-8'), self.godot_address)
             sleep_time = update_interval - (time.time() - start_time)
-            if sleep_time > 0: time.sleep(sleep_time) # TODO: investigate absolute 1/60th update time
+            if sleep_time > 0:
+                time.sleep(sleep_time)
     
     def start_sending(self, update_interval):
         sender = threading.Thread(target=self.send_data, args=(update_interval,), daemon=True)
