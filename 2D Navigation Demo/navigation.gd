@@ -41,6 +41,7 @@ class Car:
 	var best_lap
 	var last_lap
 	var progress
+	var path = []
 	
 	func _init(name="Car", velocity=0, race_position=0):
 		self.name = name
@@ -136,7 +137,8 @@ func drive_cars():
 		var x = car.coordinate.x
 		var y = car.coordinate.y
 		# print(String(x) + " " + String(y))
-		update_navigation_path(get_node(car.name).position, Vector2(x, y))
+		update_navigation_path(get_node(car.name).position, Vector2(x, y), car)
+		set_physics_process(true)
 
 
 func split_coordinate_string(string):
@@ -182,30 +184,20 @@ func ms_To_mm_ss_msmsms(time):
 
 
 func move_along_path(distance): # Distance is pixels required to be traversed in this frame
-	var last_point = $cpuCar.position
-	while path.size(): # Path is an array of points that led us to the current position
-		var distance_between_points = last_point.distance_to(path[0])
-		# The position to move to falls between two points.
-		if distance <= distance_between_points:
-			$cpuCar.position = last_point.linear_interpolate(path[0], distance / distance_between_points)
-			return
-		# The position is past the end of the segment.
-		distance -= distance_between_points
-		last_point = path[0]
-		path.remove(0)
-	# The character reached the end of the path.
-	$cpuCar.position = last_point
+	for car in cars:
+		if car.path:
+			var new_point = car.path[car.path.size()-1]
+			get_node(car.name).position = new_point
 	set_physics_process(false)
 
 
-func update_navigation_path(start_position, end_position):
+func update_navigation_path(start_position, end_position, car):
 	# get_simple_path returns a PoolVector2Array of points that lead you
 	# from the start_position to the end_position.
-	path = get_simple_path(start_position, end_position, true)
+	car.path = get_simple_path(start_position, end_position, true)
 	# The first point is always the start_position.
 	# We don't need it in this example as it corresponds to the character's position.
-	path.remove(0)
-	set_physics_process(true)
+	car.path.remove(0)
 
 
 func _init():

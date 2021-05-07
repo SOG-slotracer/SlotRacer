@@ -21,6 +21,7 @@ class Car:
                            'y': self.y[self.coordinateIndex],
                            'coordinate_reached': True}
         self.position = 1
+        self.position_percentage = 0
         self.CpuControlled = cpu_controlled
         self.derailed = False
         self.best_lap = 0
@@ -105,7 +106,9 @@ class Car:
         self.last_lap = lap_time
         self.lap_start_time = time.time()
         self.set_best_lap(lap_time)
-        print(lap_time)
+
+    def set_position_percentage(self):
+        self.position_percentage = 100 * (self.coordinateIndex / len(self.track))
 
     def get_dictionary(self):
         dictionary = {
@@ -119,6 +122,16 @@ class Car:
             "progress": self.progress
         }
         return dictionary
+
+
+def set_cars_position():
+    if len(cars) > 1:
+        if cars[0].progress >= cars[1].progress and cars[0].position_percentage >= cars[1].position_percentage:
+            cars[0].position = "1st"
+            cars[1].position = "2nd"
+        else:
+            cars[0].position = "2nd"
+            cars[1].position = "1st"
 
 
 def game_loop(cars):
@@ -142,6 +155,7 @@ def game_loop(cars):
                     car.update_velocity(new_data)
                     if car.velocity > 0:
                         car.set_lap_start_time()
+                        set_cars_position()
                         car.calculate_position()
 
             message_dictionary[car.name] = car.get_dictionary()
@@ -155,7 +169,7 @@ if __name__ == "__main__":
     playerCar = Car(outer_track, False)
     cpuCar = Car(inner_track, True)
 
-    cars = [playerCar]
+    cars = [playerCar,cpuCar]
     # add CpuCar
     game_loop(cars)
     # run_simulation(outer_track)
