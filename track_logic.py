@@ -2,6 +2,7 @@ import calculator as calculate
 import coordinates
 import godot_communicator
 import json
+import time
 
 GODOT_IP = '127.0.0.1'
 LISTENER_PORT = 4242
@@ -22,8 +23,9 @@ class Car:
         self.position = 1
         self.CpuControlled = cpu_controlled
         self.derailed = False
-        self.best_lap = -1
-        self.last_lap = -1
+        self.best_lap = 0
+        self.last_lap = 0
+        self.lap_start_time = 0
         self.progress = 0
 
     def is_accelerating(self, data):
@@ -35,9 +37,17 @@ class Car:
     def check_for_reset(self, data):
         if data:
             if self.CpuControlled:
-                self.derailed = False if b'cpu_reset' in data else True
-            else: 
-                self.derailed = False if b'reset' in data else True
+                if b'cpu_reset' in data:
+                    self.derailed = False
+                    return True
+                else:
+                    return False
+            else:
+                if b'reset' in data:
+                    self.derailed = False
+                    return True
+                else:
+                    return False
                 
     def is_derailed(self):
         i = self.coordinateIndex
@@ -48,10 +58,17 @@ class Car:
     def derail(self):
         print("DERAILED")
         self.velocity = 0
-        self.coordinate = {'x': self.x[0], 'y': self.y[0], 'coordinate_reached': True}
-        self.coordinateIndex = 0
         self.derailed = True
         return 'derailed'
+
+    def set_lap_start_time(self):
+        if not self.lap_start_time:
+            self.lap_start_time = time.time()
+
+    def reset(self):
+        self.coordinate = {'x': self.x[0], 'y': self.y[0], 'coordinate_reached': True}
+        self.coordinateIndex = 0
+        self.lap_start_time = 0
 
     def update_velocity(self, new_data):
         #self.velocity = get_new_velocity(self.velocity, self.is_accelerating(new_data) if new_data else False)
@@ -76,7 +93,19 @@ class Car:
     
     def lap_complete(self):
         self.progress += 1
+        self.set_last_lap()
         print("Laps completed: " + str(self.progress))
+
+    def set_best_lap(self, lap_time):
+        if lap_time < self.best_lap or self.best_lap == 0:
+            self.best_lap = lap_time
+
+    def set_last_lap(self):
+        lap_time = round((time.time() - self.lap_start_time) * 1000)
+        self.last_lap = lap_time
+        self.lap_start_time = time.time()
+        self.set_best_lap(lap_time)
+        print(lap_time)
 
     def get_dictionary(self):
         dictionary = {
@@ -103,14 +132,16 @@ def game_loop(cars):
         message_dictionary = {}
         for car in cars:
             if car.derailed:
-                if new_data:
-                    car.check_for_reset(new_data)
+                if car.check_for_reset(new_data):
+                    # reset this car
+                    car.reset()
             else:
                 if car.is_derailed():
                     car.derail()
                 else:
                     car.update_velocity(new_data)
                     if car.velocity > 0:
+                        car.set_lap_start_time()
                         car.calculate_position()
 
             message_dictionary[car.name] = car.get_dictionary()

@@ -116,18 +116,14 @@ func update_car_classes(data):
 func update_info_grid():
 	# pushes the information from car classes into the grid container
 	for car in cars:
-		if car.name:
-			get_node("GridContainer/Panel" + car.name + "/Name" + car.name).text = str(car.name)
-		if car.race_position:
-			get_node("GridContainer/Position" + car.name).text = str(car.race_position)
-		if car.velocity:
-			get_node("GridContainer/Velocity" + car.name).text = str(round(car.velocity))
-		if car.last_lap:
-			get_node("GridContainer/LastLap" + car.name).text = str(car.last_lap)
-		if car.best_lap:
-			get_node("GridContainer/BestLap" + car.name).text = str(car.best_lap)
-		if car.progress:
-			get_node("GridContainer/Progress" + car.name).text = str(car.progress)
+		get_node("GridContainer/Panel" + car.name + "/Name" + car.name).text = str(car.name)
+		get_node("GridContainer/Position" + car.name).text = str(car.race_position)
+		get_node("GridContainer/Velocity" + car.name).text = str(round(car.velocity))
+		var last_lap = ms_To_mm_ss_msmsms(car.last_lap)
+		var best_lap = ms_To_mm_ss_msmsms(car.best_lap)
+		get_node("GridContainer/LastLap" + car.name).text = str(last_lap)
+		get_node("GridContainer/BestLap" + car.name).text = str(best_lap)
+		get_node("GridContainer/Progress" + car.name).text = str(car.progress)
 
 
 func show_derailed():
@@ -139,7 +135,7 @@ func drive_cars():
 	for car in cars:
 		var x = car.coordinate.x
 		var y = car.coordinate.y
-		print(String(x) + " " + String(y))
+		# print(String(x) + " " + String(y))
 		update_navigation_path(get_node(car.name).position, Vector2(x, y))
 
 
