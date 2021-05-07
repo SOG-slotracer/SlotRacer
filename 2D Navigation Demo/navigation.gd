@@ -96,6 +96,9 @@ func send_throttle_on_space():
 			# only start timer if not yet started
 			start_timer()
 		communicator.socket.put_packet("space".to_ascii())
+	
+	if Input.is_key_pressed(KEY_ENTER):
+		communicator.socket.put_packet("cpu_space".to_ascii())
 
 
 func get_data():
