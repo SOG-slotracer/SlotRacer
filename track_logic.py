@@ -72,9 +72,10 @@ class Car:
         self.lap_start_time = 0
 
     def update_velocity(self, new_data):
-        #self.velocity = get_new_velocity(self.velocity, self.is_accelerating(new_data) if new_data else False)
+        # self.velocity = get_new_velocity(self.velocity, self.is_accelerating(new_data) if new_data else False)
         if new_data:
-            self.velocity = calculate.velocity(self.velocity, VELOCITY_MODIFIER if self.is_accelerating(new_data) else 0)
+            self.velocity = calculate.velocity(self.velocity,
+                                               VELOCITY_MODIFIER if self.is_accelerating(new_data) else 0)
         else:
             self.velocity = calculate.velocity(self.velocity, 0)
 
@@ -134,7 +135,7 @@ def set_cars_position():
             cars[1].position = "1st"
 
 
-def game_loop(cars):
+def game_loop(car):
     # set up communicator
     communicator = godot_communicator.Connection(GODOT_IP, LISTENER_PORT)
     communicator.start_sending(UPDATE_INTERVAL)
@@ -143,7 +144,7 @@ def game_loop(cars):
         new_data = communicator.receive_data()
 
         message_dictionary = {}
-        for car in cars:
+        for car in car:
             if car.derailed:
                 if car.check_for_reset(new_data):
                     # reset this car
@@ -169,8 +170,7 @@ if __name__ == "__main__":
     playerCar = Car(outer_track, False)
     cpuCar = Car(inner_track, True)
 
-    cars = [playerCar,cpuCar]
+    cars = [playerCar, cpuCar]
     # add CpuCar
     game_loop(cars)
     # run_simulation(outer_track)
-

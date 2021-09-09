@@ -17,7 +17,7 @@ class Connection:
     def receive_data(self):
         try:
             self.godot_socket.settimeout(0.0001)
-            data, addr = self.godot_socket.recvfrom(1024)
+            data, adder = self.godot_socket.recvfrom(1024)
 
             # interval = time.time() - Connection.timestamp
             # print(1/interval)
