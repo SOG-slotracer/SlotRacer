@@ -1,3 +1,6 @@
+""" main module for the race. Run this program
+    Create a car class, check if it is accelerating or if it will derail
+    Display lap times, number of laps completed"""
 import calculator as calculate
 import coordinates
 import godot_communicator
@@ -30,12 +33,14 @@ class Car:
         self.progress = 0
 
     def is_accelerating(self, data):
+        """ Check if space bar is being pressed by player"""
         if self.CpuControlled:
             return True if b'cpu_space' in data else False
         else: 
             return True if b'space' in data else False
 
     def check_for_reset(self, data):
+        """ check if the car is derailed"""
         if data:
             if self.CpuControlled:
                 if b'cpu_reset' in data:
@@ -51,22 +56,26 @@ class Car:
                     return False
                 
     def is_derailed(self):
+        """ calculate the centripetal force and check if it is greater than the threshold for derailing"""
         i = self.coordinateIndex
         radius = calculate.radius(self.x[i], self.y[i], self.x[i - 1], self.y[i - 1], self.x[i - 2], self.y[i - 2])
         centripetal_force = calculate.centripetal_force(self.velocity, radius)
         return calculate.is_derailed(centripetal_force)
 
     def derail(self):
+        """ if derailed, change the status of variable derailed and the velocity to zero"""
         print("DERAILED")
         self.velocity = 0
         self.derailed = True
         return 'derailed'
 
     def set_lap_start_time(self):
+        """ begin the stopwatch for the race lap"""
         if not self.lap_start_time:
             self.lap_start_time = time.time()
 
     def reset(self):
+        """ if reset by user, reset the car to initial position and the lap time"""
         self.coordinate = {'x': self.x[0], 'y': self.y[0], 'coordinate_reached': True}
         self.coordinateIndex = 0
         self.lap_start_time = 0
@@ -135,7 +144,7 @@ def set_cars_position():
             cars[1].position = "1st"
 
 
-def game_loop(car):
+def game_loop(cars):
     # set up communicator
     communicator = godot_communicator.Connection(GODOT_IP, LISTENER_PORT)
     communicator.start_sending(UPDATE_INTERVAL)
@@ -144,7 +153,7 @@ def game_loop(car):
         new_data = communicator.receive_data()
 
         message_dictionary = {}
-        for car in car:
+        for car in cars:
             if car.derailed:
                 if car.check_for_reset(new_data):
                     # reset this car

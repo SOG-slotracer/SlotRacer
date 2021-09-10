@@ -11,24 +11,27 @@ SLIDING_FRICTION = CAR_MASS * GRAVITY * SLIDING_FRICTION_COEFFICIENT
 
 
 def calculate_air_friction(vel):
+    """ simple calculation for air friction"""
     return AIR_FRICTION_COEFFICIENT / 2 * pow(vel, 2)
 
 
 def total_force(vel, throttle_force):
+    """ sum of throttle and frictional forces"""
     return throttle_force - calculate_air_friction(vel) - SLIDING_FRICTION
 
 
 def acceleration(old_velocity, throttle_force):
+    """ Newton's second law of motion"""
     return total_force(old_velocity, throttle_force) / CAR_MASS
 
 
-def velocity(old_velocity, throttle_force):
+def velocity(old_velocity, throttle_force):     # todo check if formula is correct here
     vel = acceleration(old_velocity, throttle_force) + old_velocity
     return vel if vel >= 60 else 0
 
 
 def radius(x1, y1, x2, y2, x3, y3):
-    #  formula found on: http://paulbourke.net/geometry/circlesphere/
+    """ formula found on: http://paulbourke.net/geometry/circlesphere/"""
     if x2 - x1 == 0 or x3 - x2 == 0:  # can't divide by 0
         return sys.maxsize
     ma = (y2 - y1) / (x2 - x1)
@@ -43,14 +46,17 @@ def radius(x1, y1, x2, y2, x3, y3):
 
 
 def centripetal_force(vel, rad):
+    """ simple physics. formula for centripetal force"""
     return CAR_MASS * pow(vel, 2) / rad
 
 
 def is_derailed(centripetal_forces):
+    """ compare calculated centripetal force with set threshold"""
     return abs(centripetal_forces) > DERAIL_THRESHOLD
 
 
 def calculate_deltas(x1, x2, y1, y2):
+    """ difference in position coordinates"""
     delta_x = x2-x1
     delta_y = y2-y1
     return delta_x, delta_y
