@@ -9,7 +9,7 @@ var cars
 
 var SERVER_IP ="127.0.0.1"
 var PORT = 4242
-var CHARACTER_SPEED = 10000000
+var CHARACTER_SPEED = 1
 
 var ExampleJSON: String = '{"playerCar": {"name": "playerCar", '\
 + '"race_position": 1, "velocity": 12, "last_lap": "undefined", "best_lap": '\
@@ -106,7 +106,7 @@ func get_data():
 
 
 func update_car_classes(data):
-	# print(cars[0].velocity)
+	#print(cars[0].velocity)
 	# car classes should be updated with data in JSON format
 	for car in cars:
 		for variable in car.get_property_list():

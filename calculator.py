@@ -19,7 +19,9 @@ def total_force(velocity, throttle_force):
 
 
 def acceleration(old_velocity, throttle_force):
-    return total_force(old_velocity, throttle_force) / CAR_MASS
+    Acc=total_force(old_velocity, throttle_force) / CAR_MASS
+    return Acc
+    
 
 
 def velocity(old_velocity, throttle_force):

@@ -12,7 +12,7 @@ VELOCITY_MODIFIER = 70
 
 class Car:
     def __init__(self, track, cpu_controlled):
-        self.name = "cpuCar" if cpu_controlled else "playerCar"
+        self.name =   "cpuCar" if cpu_controlled else "playerCar"
         self.velocity = 0
         self.track = track
         self.x, self.y = coordinates.extract_x_and_y_values_lists(track)
@@ -31,14 +31,14 @@ class Car:
 
     def is_accelerating(self, data):
         if self.CpuControlled:
-            return True if b'cpu_space' in data else False
-        else: 
             return True if b'space' in data else False
+        else: 
+            return True if b'cpu_space' in data else False
 
     def check_for_reset(self, data):
         if data:
             if self.CpuControlled:
-                if b'cpu_reset' in data:
+                if b'reset' in data:  #Cpu_reset
                     self.derailed = False
                     return True
                 else:
@@ -49,7 +49,7 @@ class Car:
                     return True
                 else:
                     return False
-                
+         
     def is_derailed(self):
         i = self.coordinateIndex
         radius = calculate.radius(self.x[i], self.y[i], self.x[i - 1], self.y[i - 1], self.x[i - 2], self.y[i - 2])
@@ -71,12 +71,15 @@ class Car:
         self.coordinateIndex = 0
         self.lap_start_time = 0
 
+    
+
     def update_velocity(self, new_data):
         #self.velocity = get_new_velocity(self.velocity, self.is_accelerating(new_data) if new_data else False)
         if new_data:
             self.velocity = calculate.velocity(self.velocity, VELOCITY_MODIFIER if self.is_accelerating(new_data) else 0)
         else:
             self.velocity = calculate.velocity(self.velocity, 0)
+            #print(self.velocity)
 
     def calculate_position(self):
         i = self.coordinateIndex
@@ -123,6 +126,7 @@ class Car:
         }
         return dictionary
 
+print(calculate.acceleration) 
 
 def set_cars_position():
     if len(cars) > 1:
